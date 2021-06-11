@@ -1,7 +1,7 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import styled from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import api from '../api'
 
 type ThreadPoolMonitorProps = {
@@ -12,42 +12,43 @@ type ThreadPoolMonitorProps = {
   height?: string
 }
 
-export default function ThreadPoolMonitor({ id, labelPoolName, requestPoolName, width = '440px', height = '200px' }: ThreadPoolMonitorProps) {
+export default function ThreadPoolMonitor({
+  id,
+  labelPoolName,
+  requestPoolName,
+  width = '440px',
+  height = '200px',
+}: ThreadPoolMonitorProps) {
   const [corePool, setCorePool] = useState<number>(0)
-  const [actives, setActives] = useState<{ time: string; value: number }[]>([{ time: moment(moment.now()).format('HH:mm:ss'), value: 0 }])
+  const [actives, setActives] = useState<{ time: string; value: number }[]>([
+    { time: moment(moment.now()).format('HH:mm:ss'), value: 0 },
+  ])
+  const theme = useContext(ThemeContext)
 
+  // prettier-ignore
   useEffect(() => {
-    api
-      .get(`/redirect/instances/${id}`, {
-        params: {
-          path: `metrics/${requestPoolName}?tag=prop:core-pool`,
-        },
-      })
+    api.redirectGet(id, `metrics/${requestPoolName}?tag=prop:core-pool`)
       .then(({ data }) => setCorePool(data?.measurements[0]?.value))
   }, [id, requestPoolName])
 
+  // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
-      api
-        .get(`/redirect/instances/${id}`, {
-          params: {
-            path: `metrics/${requestPoolName}?tag=prop:active`,
-          },
+      api.redirectGet(id, `metrics/${requestPoolName}?tag=prop:active`)
+      .then(({ data }) => {
+        setActives(oldActives => {
+          if (oldActives.length >= 100) {
+            oldActives.shift()
+          }
+          return [
+            ...oldActives,
+            {
+              time: moment(moment.now()).format('HH:mm:ss'),
+              value: data?.measurements[0]?.value,
+            },
+          ]
         })
-        .then(({ data }) => {
-          setActives(oldActives => {
-            if (oldActives.length >= 100) {
-              oldActives.shift()
-            }
-            return [
-              ...oldActives,
-              {
-                time: moment(moment.now()).format('HH:mm:ss'),
-                value: data?.measurements[0]?.value,
-              },
-            ]
-          })
-        })
+      })
     }, 3 * 1000)
     return () => clearTimeout(timer)
   }, [id, requestPoolName])
@@ -66,23 +67,23 @@ export default function ThreadPoolMonitor({ id, labelPoolName, requestPoolName, 
             left: 0,
             bottom: 0,
           }}>
-          <CartesianGrid strokeDasharray='3 3' stroke='#eee' />
+          <CartesianGrid strokeDasharray='3 3' stroke={theme.primaryColor} />
           <XAxis
             dataKey='time'
-            axisLine={{ stroke: '#eee' }}
-            tickLine={{ stroke: '#eee' }}
+            axisLine={{ stroke: theme.primaryColor }}
+            tickLine={{ stroke: theme.primaryColor }}
             tick={{
               strokeWidth: '0.1',
-              fill: '#eee',
-              stroke: '#eee',
+              fill: theme.primaryColor,
+              stroke: theme.primaryColor,
               fontSize: '12px',
             }}
           />
           <YAxis
             domain={[0, corePool]}
-            axisLine={{ stroke: '#eee' }}
-            tickLine={{ stroke: '#eee' }}
-            tick={{ strokeWidth: '0.1', fill: '#eee', stroke: '#eee' }}
+            axisLine={{ stroke: theme.primaryColor }}
+            tickLine={{ stroke: theme.primaryColor }}
+            tick={{ strokeWidth: '0.1', fill: theme.primaryColor, stroke: theme.primaryColor }}
           />
           <Tooltip />
           <Area type='linear' dataKey='value' stroke='#50D0F6' fill='#50D0F6' />

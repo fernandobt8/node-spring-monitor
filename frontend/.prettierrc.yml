@@ -2,6 +2,6 @@ semi: false
 singleQuote: true
 jsxSingleQuote: true
 trailingComma: es5
-printWidth: 150
+printWidth: 130
 arrowParens: 'avoid'
 jsxBracketSameLine: true

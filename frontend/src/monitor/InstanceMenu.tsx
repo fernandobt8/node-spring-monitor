@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Route, useParams, useRouteMatch } from 'react-router'
-import { Link } from 'react-router-dom'
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
-import styled, { createGlobalStyle } from 'styled-components'
+import { Redirect, Route, Switch, useParams, useRouteMatch } from 'react-router'
+import { NavTab } from 'react-router-tabs'
+import styled from 'styled-components'
 import api from '../api'
 import { Uptime } from '../components/Uptime'
 import { InstanceDTO } from '../instances/InstancesList'
@@ -24,7 +23,6 @@ export default function InstanceMenu() {
 
   return (
     <>
-      <InstanceMenuStyle />
       <Header>
         <HeaderItem>{instance?.name}</HeaderItem>
         <HeaderItem>{instance?.version}</HeaderItem>
@@ -37,23 +35,17 @@ export default function InstanceMenu() {
           <Uptime time={instance?.uptime} />
         </HeaderItem>
       </Header>
-      <Tabs>
-        <TabList>
-          <Tab>
-            <Link to={`${url}`}>Geral</Link>
-          </Tab>
-          <Tab>
-            <Link to={`${url}/env`}>Env</Link>
-          </Tab>
-        </TabList>
-
-        <TabPanel>
-          <Route path={`${path}`} component={Geral} exact />
-        </TabPanel>
-        <TabPanel>
+      <div>
+        <InstanceMenuTabs>
+          <NavTab to={`${url}/geral`}>Geral</NavTab>
+          <NavTab to={`${url}/env`}>Env</NavTab>
+        </InstanceMenuTabs>
+        <Switch>
+          <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
+          <Route path={`${path}/geral`} component={Geral} exact />
           <Route path={`${path}/env`} component={Environment} />
-        </TabPanel>
-      </Tabs>
+        </Switch>
+      </div>
     </>
   )
 }
@@ -73,15 +65,19 @@ const Header = styled.div`
   font-size: 20px;
 `
 
-const InstanceMenuStyle = createGlobalStyle`
-  .react-tabs__tab-list {
-    border-bottom: 2px solid ${props => props.theme.primaryColor};
-    margin: 0px 10px;
-    padding: 0px; 
-    text-align: center;
+const InstanceMenuTabs = styled.div`
+  border-bottom: 2px solid ${props => props.theme.primaryColor};
+  margin: 0px 10px;
+  padding: 0px;
+  text-align: center;
+
+  > a {
+    color: ${props => props.theme.primaryColor} !important;
+    text-decoration: none !important;
+    font-size: 20px !important;
   }
-  
-  .react-tabs__tab {
+
+  .nav-tab {
     background-color: transparent;
     display: inline-block;
     border: 2px solid transparent;
@@ -91,14 +87,8 @@ const InstanceMenuStyle = createGlobalStyle`
     list-style: none;
     padding: 6px 12px;
     cursor: pointer;
-    
-    > a {
-      color: ${props => props.theme.primaryColor};
-      text-decoration: none;
-      font-size: 20px;
-    }
-    
-    &--selected {
+
+    &.active {
       background: ${props => props.theme.backgroundColor};
       border-color: ${props => props.theme.primaryColor};
       border-radius: 5px 5px 0 0;

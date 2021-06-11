@@ -9,7 +9,7 @@ declare module 'styled-components' {
 }
 
 export const darkTheme: DefaultTheme = {
-  primaryColor: '#eee',
+  primaryColor: '#fafafa',
   secondaryColor: '#424242',
   backgroundColor: '#222',
 }
