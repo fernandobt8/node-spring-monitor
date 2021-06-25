@@ -1,7 +1,10 @@
 import React from 'react'
 import { useHistory, useRouteMatch } from 'react-router'
 import styled from 'styled-components'
+import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Uptime } from '../components/Uptime'
+import { colors } from '../theme/colors'
+import { BorderRadius } from '../theme/styles'
 import { InstanceDTO } from './InstancesList'
 
 type InstancesTableProps = {
@@ -10,11 +13,11 @@ type InstancesTableProps = {
 
 export function InstancesTable({ instances }: InstancesTableProps) {
   return (
-    <MainList>
+    <ul>
       {instances.map(item => (
-        <ItemList {...item} />
+        <ItemList key={item.id} {...item} />
       ))}
-    </MainList>
+    </ul>
   )
 }
 
@@ -27,52 +30,32 @@ function ItemList(props: InstanceDTO) {
   }
 
   return (
-    <ItemListCss onClick={itemCliked} key={props.name}>
-      <Status>{props.status}</Status>
+    <ItemListStyle as='li' onClick={itemCliked} key={props.name} justifyContent={'space-around'}>
+      <div style={{ minWidth: 100 }}>{props.status}</div>
       <Name>
         <div>{props.name}</div>
         <div>{props.serviceUrl}</div>
       </Name>
-      <TextCenter style={{ minWidth: 120 }}>{props.version || '0.0.0'}</TextCenter>
-      <TextCenter>
+      <div style={{ minWidth: 120 }}>{props.version || '0.0.0'}</div>
+      <div>
         <div>Sessions</div>
         <div>{props.sessions || 0}</div>
-      </TextCenter>
-      <TextCenter>
+      </div>
+      <div>
         <div>Uptime</div>
         <Uptime time={props.uptime} />
-      </TextCenter>
-    </ItemListCss>
+      </div>
+    </ItemListStyle>
   )
 }
 
-const Status = styled.div`
-  margin: auto 5px;
-  min-width: 100px;
-`
-
-const TextCenter = styled.div`
-  margin: auto;
-  text-align: center;
-`
-
 const Name = styled.div`
-  margin: auto 0px;
   width: 350px;
-  > div {
-    text-align: left;
-  }
+  text-align: left;
 `
 
-const MainList = styled.ul`
-  text-align: center;
-  margin: 0px;
-  padding: 5px 25px;
-`
-
-const ItemListCss = styled.li`
-  border: 2px solid ${props => props.theme.primaryColor};
-  border-radius: 5px;
+const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
+  ${BorderRadius}
 
   max-width: 1360px;
   min-height: 50px;
@@ -80,14 +63,9 @@ const ItemListCss = styled.li`
   margin: auto;
   margin-bottom: 5px;
 
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  text-align: left;
-
   &:hover {
     cursor: pointer;
-    background-color: ${props => props.theme.secondaryColor};
+    background-color: ${colors.secondary};
   }
 
   &::marker {

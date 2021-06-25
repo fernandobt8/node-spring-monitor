@@ -17,8 +17,8 @@ function App() {
 }
 
 const Container = styled.div`
-  background-color: ${props => props.theme.backgroundColor};
-  color: ${props => props.theme.primaryColor};
+  background-color: var(--backgroundColor);
+  color: var(--primaryColor);
   width: 100%;
   height: 100%;
 `

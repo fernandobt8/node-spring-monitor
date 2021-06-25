@@ -1,21 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
-import { ThemeProvider, createGlobalStyle } from 'styled-components'
+import { ThemeProvider } from 'styled-components'
 import App from './App'
-import { darkTheme } from './theme'
-
-const GlobalStyle = createGlobalStyle`
-  html, body, #root {
-    height: 100%;
-    width: 100%;
-    margin: 0px;
-  }
-
-  * {
-    background-color: inherit;
-  }
-`
+import { darkTheme, GlobalStyle } from './theme/theme'
 
 ReactDOM.render(
   <React.StrictMode>

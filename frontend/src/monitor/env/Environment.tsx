@@ -103,16 +103,16 @@ function PropertySource({ name, properties, count }) {
 }
 
 const ToolTipCss = createGlobalStyle`
- .__react_component_tooltip.show {
-  opacity: 1 !important;
-  font-size: 16px !important;
-  border-color: ${props => props.theme.primaryColor} !important;
+ .__react_component_tooltip.__react_component_tooltip.show {
+  opacity: 1;
+  font-size: 16px;
+  border-color: ${props => props.theme.primaryColor};
 
   &.place-top::before {
-    border-top-color: ${props => props.theme.primaryColor} !important;
+    border-top-color: ${props => props.theme.primaryColor};
   }  
   &.place-right::before {
-    border-right-color: ${props => props.theme.primaryColor} !important;
+    border-right-color: ${props => props.theme.primaryColor};
   }
  }
 `

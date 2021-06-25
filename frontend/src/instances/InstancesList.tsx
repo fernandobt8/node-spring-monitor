@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import api from '../api'
+import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import InstancesTable from './InstancesTable'
 
 enum InstanceStatus {
@@ -35,14 +36,14 @@ export function InstancesList() {
   }, [])
 
   return (
-    <Container>
-      <Header>
+    <>
+      <Header gap={60}>
         <ItemHeader label='Applications' value={new Set(data.map(i => i.name)).size} />
         <ItemHeader label='Instances' value={data.length} />
         <ItemHeader label='Instances down' value={data.filter(i => i.status === InstanceStatus.DOWN).length} />
       </Header>
       <InstancesTable instances={data} />
-    </Container>
+    </>
   )
 }
 
@@ -51,27 +52,15 @@ type ItemHeaderProps = { label: string; value?: number }
 function ItemHeader({ label, value }: ItemHeaderProps) {
   return (
     <div>
-      <HeaderLabel>{label}</HeaderLabel>
-      <HeaderLabel>{value || 0}</HeaderLabel>
+      <h3>{label}</h3>
+      <h3>{value || 0}</h3>
     </div>
   )
 }
 
-const Container = styled.div`
+const Header = styled(FlexBox)<FlexBoxProps>`
+  padding: 50px 0px;
   text-align: center;
-`
-
-const Header = styled.div`
-  padding: 50px 20px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 60px;
-`
-
-const HeaderLabel = styled.h3`
-  margin: 0px;
 `
 
 export default InstancesList

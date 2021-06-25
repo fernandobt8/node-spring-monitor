@@ -7,6 +7,7 @@ import { Uptime } from '../components/Uptime'
 import { InstanceDTO } from '../instances/InstancesList'
 import { Environment } from './env/Environment'
 import { Geral } from './geral/Geral'
+import { Logging } from './log/Logging'
 
 export type InstaceParams = {
   id: string
@@ -39,11 +40,13 @@ export default function InstanceMenu() {
         <InstanceMenuTabs>
           <NavTab to={`${url}/geral`}>Geral</NavTab>
           <NavTab to={`${url}/env`}>Env</NavTab>
+          <NavTab to={`${url}/log`}>Log</NavTab>
         </InstanceMenuTabs>
         <Switch>
           <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
           <Route path={`${path}/geral`} component={Geral} exact />
           <Route path={`${path}/env`} component={Environment} />
+          <Route path={`${path}/log`} component={Logging} />
         </Switch>
       </div>
     </>
