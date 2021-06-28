@@ -3,9 +3,8 @@ import { useHistory, useRouteMatch } from 'react-router'
 import styled from 'styled-components'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Uptime } from '../components/Uptime'
-import { colors } from '../theme/colors'
 import { BorderRadius } from '../theme/styles'
-import { InstanceDTO } from './InstancesList'
+import { InstanceDTO, InstanceStatus } from './InstancesList'
 
 type InstancesTableProps = {
   instances: InstanceDTO[]
@@ -31,7 +30,7 @@ function ItemList(props: InstanceDTO) {
 
   return (
     <ItemListStyle as='li' onClick={itemCliked} key={props.name} justifyContent={'space-around'}>
-      <div style={{ minWidth: 100 }}>{props.status}</div>
+      <div>{InstanceStatus[props.status]}</div>
       <Name>
         <div>{props.name}</div>
         <div>{props.serviceUrl}</div>
@@ -65,7 +64,7 @@ const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
 
   &:hover {
     cursor: pointer;
-    background-color: ${colors.secondary};
+    background-color: var(--secondaryColor);
   }
 
   &::marker {

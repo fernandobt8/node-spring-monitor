@@ -1,8 +1,10 @@
 import moment from 'moment'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import api from '../api'
+import { colors } from '../theme/colors'
+import { BorderRadius } from '../theme/styles'
 
 type ThreadPoolMonitorProps = {
   id: string
@@ -23,7 +25,6 @@ export default function ThreadPoolMonitor({
   const [actives, setActives] = useState<{ time: string; value: number }[]>([
     { time: moment(moment.now()).format('HH:mm:ss'), value: 0 },
   ])
-  const theme = useContext(ThemeContext)
 
   // prettier-ignore
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function ThreadPoolMonitor({
   return (
     <ChartCss style={{ height: height, width: width }}>
       <div>{labelPoolName}</div>
-      <ResponsiveContainer width='100%' height='100%'>
+      <ResponsiveContainerStyle width='100%' height='100%'>
         <AreaChart
           width={500}
           height={400}
@@ -67,40 +68,38 @@ export default function ThreadPoolMonitor({
             left: 0,
             bottom: 0,
           }}>
-          <CartesianGrid strokeDasharray='3 3' stroke={theme.primaryColor} />
+          <CartesianGrid strokeDasharray='3 3' stroke={colors.primary} />
           <XAxis
             dataKey='time'
-            axisLine={{ stroke: theme.primaryColor }}
-            tickLine={{ stroke: theme.primaryColor }}
+            axisLine={{ stroke: colors.primary }}
+            tickLine={{ stroke: colors.primary }}
             tick={{
               strokeWidth: '0.1',
-              fill: theme.primaryColor,
-              stroke: theme.primaryColor,
+              fill: colors.primary,
+              stroke: colors.primary,
               fontSize: '12px',
             }}
           />
           <YAxis
             domain={[0, corePool]}
-            axisLine={{ stroke: theme.primaryColor }}
-            tickLine={{ stroke: theme.primaryColor }}
-            tick={{ strokeWidth: '0.1', fill: theme.primaryColor, stroke: theme.primaryColor }}
+            axisLine={{ stroke: colors.primary }}
+            tickLine={{ stroke: colors.primary }}
+            tick={{ strokeWidth: '0.1', fill: colors.primary, stroke: colors.primary }}
           />
           <Tooltip />
           <Area type='linear' dataKey='value' stroke='#50D0F6' fill='#50D0F6' />
         </AreaChart>
-      </ResponsiveContainer>
+      </ResponsiveContainerStyle>
     </ChartCss>
   )
 }
 
-const ChartCss = styled.div`
-  border: 2px solid ${props => props.theme.primaryColor};
-  border-radius: 5px;
-  text-align: center;
-  padding: 10px 0px 20px 0px;
+const ResponsiveContainerStyle = styled(ResponsiveContainer)`
+  margin-left: -10px;
+  background-color: transparent;
+`
 
-  > .recharts-responsive-container {
-    margin-left: -10px;
-    background-color: transparent;
-  }
+const ChartCss = styled.div`
+  ${BorderRadius}
+  padding: 10px 0px 20px 0px;
 `

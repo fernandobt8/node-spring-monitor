@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import styled from 'styled-components'
+import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
 import ThreadPoolMonitor from '../../components/ThreadPoolMonitor'
 import { InstaceParams } from '../InstanceMenu'
 
@@ -8,7 +9,7 @@ export function Geral() {
   const { id } = useParams<InstaceParams>()
 
   return (
-    <Container>
+    <Container justifyContent='flex-start'>
       <ThreadPoolMonitor id={id} labelPoolName='HTTP' requestPoolName='pec.pool.app-http-nio' />
       <ThreadPoolMonitor id={id} labelPoolName='Android' requestPoolName='pec.pool.android-http-nio' />
       <ThreadPoolMonitor id={id} labelPoolName='MPI' requestPoolName='pec.pool.app-mpi' />
@@ -21,10 +22,6 @@ export function Geral() {
   )
 }
 
-const Container = styled.div`
+const Container = styled(FlexBox)<FlexBoxProps>`
   padding: 20px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 30px;
 `

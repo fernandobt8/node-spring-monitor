@@ -1,10 +1,6 @@
 import React from 'react'
 
-type UptimeProps = {
-  time?: number
-}
-
-export function Uptime({ time = 0 }: UptimeProps) {
+export function Uptime({ time = 0 }: { time?: number }) {
   // get total seconds between the times
   var delta = time || 0 / 1000
 

@@ -4,9 +4,9 @@ import api from '../api'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import InstancesTable from './InstancesTable'
 
-enum InstanceStatus {
-  CONNECTED = 'CONNECTED',
-  DOWN = 'DOWN',
+export enum InstanceStatus {
+  CONNECTED = 'U',
+  DOWN = 'D',
 }
 
 export type InstanceDTO = {
@@ -47,9 +47,7 @@ export function InstancesList() {
   )
 }
 
-type ItemHeaderProps = { label: string; value?: number }
-
-function ItemHeader({ label, value }: ItemHeaderProps) {
+function ItemHeader({ label, value }: { label: string; value?: number }) {
   return (
     <div>
       <h3>{label}</h3>
@@ -60,7 +58,6 @@ function ItemHeader({ label, value }: ItemHeaderProps) {
 
 const Header = styled(FlexBox)<FlexBoxProps>`
   padding: 50px 0px;
-  text-align: center;
 `
 
 export default InstancesList

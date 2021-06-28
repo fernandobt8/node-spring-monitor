@@ -3,6 +3,7 @@ import { Redirect, Route, Switch, useParams, useRouteMatch } from 'react-router'
 import { NavTab } from 'react-router-tabs'
 import styled from 'styled-components'
 import api from '../api'
+import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Uptime } from '../components/Uptime'
 import { InstanceDTO } from '../instances/InstancesList'
 import { Environment } from './env/Environment'
@@ -24,27 +25,27 @@ export default function InstanceMenu() {
 
   return (
     <>
-      <Header>
-        <HeaderItem>{instance?.name}</HeaderItem>
-        <HeaderItem>{instance?.version}</HeaderItem>
-        <HeaderItem>
+      <Header gap={60}>
+        <div>{instance?.name}</div>
+        <div>{instance?.version}</div>
+        <div>
           <div>Sessions</div>
           {instance?.sessions}
-        </HeaderItem>
-        <HeaderItem>
+        </div>
+        <div>
           <div>Uptime</div>
           <Uptime time={instance?.uptime} />
-        </HeaderItem>
+        </div>
       </Header>
       <div>
         <InstanceMenuTabs>
-          <NavTab to={`${url}/geral`}>Geral</NavTab>
-          <NavTab to={`${url}/env`}>Env</NavTab>
-          <NavTab to={`${url}/log`}>Log</NavTab>
+          <NavTabStyled to={`${url}/geral`}>Geral</NavTabStyled>
+          <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
+          <NavTabStyled to={`${url}/log`}>Log</NavTabStyled>
         </InstanceMenuTabs>
         <Switch>
           <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
-          <Route path={`${path}/geral`} component={Geral} exact />
+          <Route path={`${path}/geral`} component={Geral} />
           <Route path={`${path}/env`} component={Environment} />
           <Route path={`${path}/log`} component={Logging} />
         </Switch>
@@ -53,48 +54,29 @@ export default function InstanceMenu() {
   )
 }
 
-const HeaderItem = styled.div`
-  margin: auto 0px;
-  text-align: center;
-`
-
-const Header = styled.div`
+const Header = styled(FlexBox)<FlexBoxProps>`
   padding: 30px 0px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 60px;
   font-size: 20px;
 `
 
-const InstanceMenuTabs = styled.div`
-  border-bottom: 2px solid ${props => props.theme.primaryColor};
-  margin: 0px 10px;
-  padding: 0px;
-  text-align: center;
+const NavTabStyled = styled(NavTab)`
+  color: var(--primaryColor);
+  text-decoration: none;
+  font-size: 20px;
+  position: relative;
+  bottom: -2px;
+  padding: 6px 12px;
+  background-color: transparent;
 
-  > a {
-    color: ${props => props.theme.primaryColor} !important;
-    text-decoration: none !important;
-    font-size: 20px !important;
-  }
-
-  .nav-tab {
-    background-color: transparent;
-    display: inline-block;
-    border: 2px solid transparent;
+  &.active {
+    border: 2px solid var(--primaryColor);
+    border-radius: 5px 5px 0 0;
     border-bottom: none;
-    bottom: -2px;
-    position: relative;
-    list-style: none;
-    padding: 6px 12px;
-    cursor: pointer;
-
-    &.active {
-      background: ${props => props.theme.backgroundColor};
-      border-color: ${props => props.theme.primaryColor};
-      border-radius: 5px 5px 0 0;
-    }
+    background: var(--backgroundColor);
   }
+`
+
+const InstanceMenuTabs = styled(FlexBox)`
+  border-bottom: 2px solid var(--primaryColor);
+  margin: 0px 10px;
 `
