@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import api from '../api'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
-import InstancesTable from './InstancesTable'
+import { InstancesTable } from './InstancesTable'
 
 export enum InstanceStatus {
   CONNECTED = 'U',
@@ -26,7 +26,7 @@ export type InstanceDTO = {
   uptime: number
 }
 
-export function InstancesList() {
+export default function InstancesList() {
   const [data, setData] = useState<InstanceDTO[]>([])
 
   useEffect(() => {
@@ -59,5 +59,3 @@ function ItemHeader({ label, value }: { label: string; value?: number }) {
 const Header = styled(FlexBox)<FlexBoxProps>`
   padding: 50px 0px;
 `
-
-export default InstancesList

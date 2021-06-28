@@ -71,5 +71,3 @@ const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
     content: '';
   }
 `
-
-export default InstancesTable

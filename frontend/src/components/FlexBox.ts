@@ -5,6 +5,7 @@ export interface FlexBoxProps {
   alignItems?: string
   alignContent?: string
   gap?: number
+  wrap?: string
 }
 
 export const FlexBox = styled.div<FlexBoxProps>`
@@ -13,6 +14,6 @@ export const FlexBox = styled.div<FlexBoxProps>`
   justify-content: ${p => p.justifyContent || 'center'};
   align-items: ${p => p.alignItems || 'center'};
   align-content: ${p => p.alignContent || 'normal'};
-  flex-wrap: wrap;
+  flex-wrap: ${p => p.wrap || 'wrap'};
   gap: ${p => (p.gap !== undefined ? p.gap : 20)}px;
 `

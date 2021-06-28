@@ -38,7 +38,7 @@ export default function InstanceMenu() {
         </div>
       </Header>
       <div>
-        <InstanceMenuTabs>
+        <InstanceMenuTabs gap={0}>
           <NavTabStyled to={`${url}/geral`}>Geral</NavTabStyled>
           <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
           <NavTabStyled to={`${url}/log`}>Log</NavTabStyled>
