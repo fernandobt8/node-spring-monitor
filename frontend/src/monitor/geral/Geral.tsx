@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router'
 import styled from 'styled-components'
 import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
-import ThreadPoolMonitor from '../../components/ThreadPoolMonitor'
+import { ThreadPoolMonitor } from '../../components/ThreadPoolMonitor'
 import { InstaceParams } from '../InstanceMenu'
 
 export function Geral() {

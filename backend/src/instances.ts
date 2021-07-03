@@ -51,14 +51,19 @@ export default class InstancesService {
 
   async get(request: Request, response: Response) {
     let id = request.params.id
-    let instance = instances.filter((ins) => ins.id === id)[0]
+    let instance = instances.find((ins) => ins.id === id)
 
     response.send(instance)
   }
 
   async redirect(request: Request, response: Response) {
     let id = request.params.id
-    let instance = instances.filter((ins) => ins.id === id)[0]
+    let instance = instances.find((ins) => ins.id === id)
+
+    if (!instance) {
+      response.status(500).send()
+      return
+    }
 
     let path = request.query.path
 
@@ -74,6 +79,7 @@ export default class InstancesService {
       })
       .catch((err) => {
         console.log(err.status)
+        response.status(500).send()
       })
   }
 }

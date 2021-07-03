@@ -14,7 +14,7 @@ type ThreadPoolMonitorProps = {
   height?: string
 }
 
-export default function ThreadPoolMonitor({
+export function ThreadPoolMonitor({
   id,
   labelPoolName,
   requestPoolName,
@@ -49,7 +49,7 @@ export default function ThreadPoolMonitor({
             },
           ]
         })
-      })
+      }).catch(({data}) => {console.log('erro')})
     }, 3 * 1000)
     return () => clearTimeout(timer)
   }, [id, requestPoolName])

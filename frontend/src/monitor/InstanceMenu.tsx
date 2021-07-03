@@ -9,6 +9,7 @@ import { InstanceDTO } from '../instances/InstancesList'
 import { Environment } from './env/Environment'
 import { Geral } from './geral/Geral'
 import { Logging } from './log/Logging'
+import { Thread } from './thread/Thread'
 
 export type InstaceParams = {
   id: string
@@ -40,14 +41,16 @@ export default function InstanceMenu() {
       <div>
         <InstanceMenuTabs gap={0}>
           <NavTabStyled to={`${url}/geral`}>Geral</NavTabStyled>
-          <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
+          <NavTabStyled to={`${url}/thread`}>Threads</NavTabStyled>
           <NavTabStyled to={`${url}/log`}>Log</NavTabStyled>
+          <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
         </InstanceMenuTabs>
         <Switch>
           <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
           <Route path={`${path}/geral`} component={Geral} />
-          <Route path={`${path}/env`} component={Environment} />
+          <Route path={`${path}/thread`} component={Thread} />
           <Route path={`${path}/log`} component={Logging} />
+          <Route path={`${path}/env`} component={Environment} />
         </Switch>
       </div>
     </>
