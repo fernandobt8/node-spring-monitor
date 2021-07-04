@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import styled from 'styled-components'
 import api from '../../api'
 import { InstaceParams } from '../InstanceMenu'
 
@@ -11,5 +12,12 @@ export function Logging() {
     api.redirectGet(id, 'logfile').then(({ data }) => setLog(data))
   }, [id])
 
-  return <div>{log}</div>
+  return <Log>{log}</Log>
 }
+
+const Log = styled.p`
+  white-space: pre;
+  text-align: left;
+  overflow: auto;
+  height: calc(100vh - 190px);
+`

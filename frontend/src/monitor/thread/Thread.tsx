@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import styled from 'styled-components'
 import api from '../../api'
@@ -62,12 +62,11 @@ type ThreadOverTime = {
   }[]
 }
 
-//`${className}.${methodName}(${fileName}:${lineNumber})
-//java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-
 export function Thread() {
   const { id } = useParams<InstaceParams>()
   const [threads, setThreads] = useState<ThreadOverTime[]>([])
+  const [timeStart, setTimeStart] = useState(moment.now() - 1000)
+  const [timeEnd, setTimeEnd] = useState(moment.now() + 5 * 60 * 1000 - 1000)
 
   useEffect(() => {
     let timer = setInterval(() => {
@@ -80,54 +79,109 @@ export function Thread() {
     return () => clearTimeout(timer)
   }, [id, setThreads])
 
+  useEffect(() => {
+    let timer = setInterval(() => {
+      const now = moment.now()
+      if (now > timeEnd) {
+        setTimeStart(now - 5 * 60 * 1000)
+        setTimeEnd(now)
+      }
+    }, 3 * 1000)
+    return () => clearTimeout(timer)
+  }, [timeEnd, setTimeStart, setTimeEnd])
+
   function updateThreads(oldIntervals: ThreadOverTime[], newThreads: ThreadDTO[]) {
     let newIntervals = [...oldIntervals]
     let currentTime = moment.now()
+    let newItem = false
     newThreads.forEach(nt => {
-      let threadInterval = newIntervals.find(t => t.threadId === nt.threadId)
-      if (threadInterval) {
-        let lastInterval = threadInterval.threadIntervals.pop()
-        let ntdto = new ThreadDTO(nt)
-        if (lastInterval.thread.stackTraceChanged(new ThreadDTO(ntdto))) {
-          threadInterval.threadIntervals.push(lastInterval)
-          threadInterval.threadIntervals.push({ start: lastInterval.end, end: currentTime, thread: ntdto })
+      let threadIntervals = newIntervals.find(t => t.threadId === nt.threadId)?.threadIntervals
+      let ntdto = new ThreadDTO(nt)
+      if (threadIntervals) {
+        let lastInterval = threadIntervals.pop()
+        if (lastInterval.thread.stackTraceChanged(ntdto)) {
+          threadIntervals.push(lastInterval)
+          threadIntervals.push({ start: lastInterval.end, end: currentTime, thread: ntdto })
         } else {
-          threadInterval.threadIntervals.push({ ...lastInterval, end: currentTime })
+          threadIntervals.push({ ...lastInterval, end: currentTime })
         }
       } else {
         newIntervals.push({
           threadId: nt.threadId,
           threadName: nt.threadName,
-          threadIntervals: [{ start: currentTime - 1000, end: currentTime, thread: new ThreadDTO(nt) }],
+          threadIntervals: [{ start: currentTime - 1000, end: currentTime, thread: ntdto }],
         })
+        newItem = true
       }
     })
-    return newIntervals.sort((a, b) => (a.threadName > b.threadName ? 1 : -1))
+    return newItem ? newIntervals.sort((a, b) => (a.threadName > b.threadName ? 1 : -1)) : newIntervals
   }
 
   return (
     <ul>
       {threads?.map(thread => (
-        <ItemListStyle key={thread.threadId} justifyContent='flex-start'>
-          <div>{thread.threadName}</div>
-          {thread.threadIntervals.map(ti => {
-            return (
-              <>
-                <div>{ti.start}</div>
-                <div>{ti.end}</div>
-              </>
-            )
-          })}
-        </ItemListStyle>
+        <ItemList timeStart={timeStart} timeEnd={timeEnd} thread={thread} />
       ))}
     </ul>
   )
 }
 
+function ItemList({ thread, timeStart, timeEnd }: { thread: ThreadOverTime; timeStart: number; timeEnd: number }) {
+  const [width, setWidth] = useState(null)
+
+  const pixelInterval = width - 250
+
+  const interval = timeEnd - timeStart
+
+  const div = useCallback(node => {
+    setWidth(node?.getBoundingClientRect().width)
+  }, [])
+
+  return (
+    <ItemListStyle ref={div} key={thread.threadId} justifyContent='flex-start' wrap='nowrap' gap={0}>
+      <ItemName>{thread.threadName}</ItemName>
+      {thread.threadIntervals.map(ti => {
+        const percenteOfInterval = (ti.start - timeStart) / interval
+        const pixelStart = percenteOfInterval * pixelInterval + 250
+
+        const percenteOfIntervalEnd = (ti.end - timeStart) / interval
+        const pixelEnd = percenteOfIntervalEnd * pixelInterval - (pixelStart - 250)
+
+        let state = 'yellow'
+        if (ti.thread.threadState === 'RUNNABLE') {
+          state = 'green'
+        } else if (ti.thread.threadState === 'BLOCKED') {
+          state = 'red'
+        }
+
+        return <ItemInterval start={pixelStart} end={pixelEnd} state={state} />
+      })}
+    </ItemListStyle>
+  )
+}
+
+const ItemName = styled.div`
+  min-width: 250px;
+  max-width: 250px;
+  white-space: nowrap;
+`
+
+const ItemInterval = styled.div<{ start: number; end: number; state: string }>`
+  position: absolute;
+  left: ${p => p.start}px;
+  width: ${p => p.end}px;
+  background-color: ${p => p.state};
+  border-right: 2px solid var(--secondaryColor);
+  height: 20px;
+`
+
 const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
   padding: 5px;
   text-align: left;
   width: 100%;
+  position: relative;
+
+  border-bottom: 2px solid var(--secondaryColor);
 
   &:hover {
     cursor: pointer;

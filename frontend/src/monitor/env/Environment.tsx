@@ -41,7 +41,7 @@ export function Environment() {
 
   let count = 0
   return (
-    <Content>
+    <div style={{ textAlign: 'left' }}>
       <ToggleOption gap={0}>
         <NavTabStyled to={`${url}/config`}>Env</NavTabStyled>
         <NavTabStyled to={`${url}/props`}>Config</NavTabStyled>
@@ -57,14 +57,10 @@ export function Environment() {
           <PropertySource values={configs?.propertySources} count={++count} />
         </Route>
       </Switch>
-    </Content>
+    </div>
   )
 }
 
-const Content = styled.div`
-  padding: 20px;
-  text-align: left;
-`
 const ToggleOption = styled(FlexBox)<FlexBoxProps>`
   border: 2px solid var(--primaryColor);
   width: fit-content;

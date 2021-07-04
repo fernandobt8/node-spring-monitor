@@ -45,17 +45,23 @@ export default function InstanceMenu() {
           <NavTabStyled to={`${url}/log`}>Log</NavTabStyled>
           <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
         </InstanceMenuTabs>
-        <Switch>
-          <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
-          <Route path={`${path}/geral`} component={Geral} />
-          <Route path={`${path}/thread`} component={Thread} />
-          <Route path={`${path}/log`} component={Logging} />
-          <Route path={`${path}/env`} component={Environment} />
-        </Switch>
+        <Container>
+          <Switch>
+            <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
+            <Route path={`${path}/geral`} component={Geral} />
+            <Route path={`${path}/thread`} component={Thread} />
+            <Route path={`${path}/log`} component={Logging} />
+            <Route path={`${path}/env`} component={Environment} />
+          </Switch>
+        </Container>
       </div>
     </>
   )
 }
+
+const Container = styled.div`
+  padding: 20px;
+`
 
 const Header = styled(FlexBox)<FlexBoxProps>`
   padding: 30px 0px;

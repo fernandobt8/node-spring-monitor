@@ -73,6 +73,7 @@ const PropertySourceItem = styled(FlexBox)`
 const PropertySourceKey = styled.div`
   max-width: 470px;
   min-width: 470px;
+  white-space: nowrap;
 `
 const PropertySourceValue = styled.div`
   width: 100%;
