@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-export function ToolTip({ id, children }) {
+export function ToolTip({ id, children }: { id: string; children: ReactNode }) {
   return (
     <ToolTipStyle place='top' effect='solid' type='dark' id={id}>
       {children}
@@ -23,5 +23,9 @@ const ToolTipStyle = styled(ReactTooltip)`
 
   &&.place-right::before {
     border-right-color: var(--primaryColor);
+  }
+
+  &&.place-left::before {
+    border-left-color: var(--primaryColor);
   }
 `

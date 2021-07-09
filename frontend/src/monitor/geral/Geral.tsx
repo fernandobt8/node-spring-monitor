@@ -2,10 +2,10 @@ import React from 'react'
 import { useParams } from 'react-router'
 import { FlexBox } from '../../components/FlexBox'
 import { ThreadPoolMonitor } from '../../components/ThreadPoolMonitor'
-import { InstaceParams } from '../InstanceMenu'
+import { InstanceParams } from '../InstanceMenu'
 
 export function Geral() {
-  const { id } = useParams<InstaceParams>()
+  const { id } = useParams<InstanceParams>()
 
   return (
     <FlexBox justifyContent='flex-start'>

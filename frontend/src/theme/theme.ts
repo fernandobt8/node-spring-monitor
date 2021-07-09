@@ -30,6 +30,7 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
     margin: 0px;
     text-align: center;
+    font-family: Sans-serif;
   }
 
   * {

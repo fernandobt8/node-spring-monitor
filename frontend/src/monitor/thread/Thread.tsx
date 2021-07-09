@@ -1,12 +1,11 @@
 import moment from 'moment'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import styled from 'styled-components'
 import api from '../../api'
-import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
-import { InstaceParams } from '../InstanceMenu'
+import { InstanceParams } from '../InstanceMenu'
+import { ThreadList } from './ThreadList'
 
-class StackTraceDTO {
+export class StackTraceDTO {
   classLoaderName?: string
   className: string
   fileName?: string
@@ -23,7 +22,7 @@ class StackTraceDTO {
   }
 }
 
-class ThreadDTO {
+export class ThreadDTO {
   threadId: number
   threadName: string
   threadState: 'NEW' | 'RUNNABLE' | 'BLOCKED' | 'WAITING' | 'TIMED_WAITING' | 'TERMINATED'
@@ -40,62 +39,53 @@ class ThreadDTO {
   waitedTime: number
   lockInfo?: { className: string; identityHashCode: number }
   stackTrace: StackTraceDTO[]
+  brStackTrace?: string
   public constructor(init?: Partial<ThreadDTO>) {
     Object.assign(this, init)
     this.stackTrace = init?.stackTrace.map(st => new StackTraceDTO({ ...st }))
+    this.brStackTrace = this.stackTrace.find(st => st.className.startsWith('br.'))?.print()
   }
   printStackTrace() {
     return this.stackTrace.map(sT => sT.print())
   }
-  stackTraceChanged(thread: ThreadDTO) {
-    return this.stackTrace?.[0]?.print() !== thread.stackTrace?.[0]?.print()
+  stackTraceChanged(thread?: ThreadDTO) {
+    return this.stackTrace?.[0]?.print() !== thread?.stackTrace?.[0]?.print()
   }
 }
 
-type ThreadOverTime = {
+export type ThreadInterval = {
+  start: number
+  end: number
+  thread: ThreadDTO
+}
+
+export type ThreadOverTime = {
   threadId: number
   threadName: string
-  threadIntervals: {
-    start: number
-    end: number
-    thread: ThreadDTO
-  }[]
+  threadIntervals: ThreadInterval[]
+}
+
+function sort(a: ThreadOverTime, b: ThreadOverTime) {
+  if (a.threadName === b.threadName) {
+    return a.threadId > b.threadId ? 1 : -1
+  } else {
+    return a.threadName > b.threadName ? 1 : -1
+  }
 }
 
 export function Thread() {
-  const { id } = useParams<InstaceParams>()
+  const { id } = useParams<InstanceParams>()
   const [threads, setThreads] = useState<ThreadOverTime[]>([])
   const [timeStart, setTimeStart] = useState(moment.now() - 1000)
   const [timeEnd, setTimeEnd] = useState(moment.now() + 5 * 60 * 1000 - 1000)
 
-  useEffect(() => {
-    let timer = setInterval(() => {
-      api
-        .redirectGet(id, `threaddump`, { headers: { Accept: 'application/json' } })
-        .then(({ data }: { data: { threads: ThreadDTO[] } }) => {
-          setThreads(oldIntervals => updateThreads(oldIntervals, data.threads))
-        })
-    }, 3 * 1000)
-    return () => clearTimeout(timer)
-  }, [id, setThreads])
-
-  useEffect(() => {
-    let timer = setInterval(() => {
-      const now = moment.now()
-      if (now > timeEnd) {
-        setTimeStart(now - 5 * 60 * 1000)
-        setTimeEnd(now)
-      }
-    }, 3 * 1000)
-    return () => clearTimeout(timer)
-  }, [timeEnd, setTimeStart, setTimeEnd])
-
-  function updateThreads(oldIntervals: ThreadOverTime[], newThreads: ThreadDTO[]) {
-    let newIntervals = [...oldIntervals]
+  const updateThreads = useCallback((oldThreads: ThreadOverTime[], newThreads: ThreadDTO[]) => {
+    let copyThreads = [...oldThreads]
     let currentTime = moment.now()
     let newItem = false
+
     newThreads.forEach(nt => {
-      let threadIntervals = newIntervals.find(t => t.threadId === nt.threadId)?.threadIntervals
+      let threadIntervals = copyThreads.find(t => t.threadId === nt.threadId)?.threadIntervals
       let ntdto = new ThreadDTO(nt)
       if (threadIntervals) {
         let lastInterval = threadIntervals.pop()
@@ -106,7 +96,7 @@ export function Thread() {
           threadIntervals.push({ ...lastInterval, end: currentTime })
         }
       } else {
-        newIntervals.push({
+        copyThreads.push({
           threadId: nt.threadId,
           threadName: nt.threadName,
           threadIntervals: [{ start: currentTime - 1000, end: currentTime, thread: ntdto }],
@@ -114,81 +104,39 @@ export function Thread() {
         newItem = true
       }
     })
-    return newItem ? newIntervals.sort((a, b) => (a.threadName > b.threadName ? 1 : -1)) : newIntervals
-  }
-
-  return (
-    <ul>
-      {threads?.map(thread => (
-        <ItemList timeStart={timeStart} timeEnd={timeEnd} thread={thread} />
-      ))}
-    </ul>
-  )
-}
-
-function ItemList({ thread, timeStart, timeEnd }: { thread: ThreadOverTime; timeStart: number; timeEnd: number }) {
-  const [width, setWidth] = useState(null)
-
-  const pixelInterval = width - 250
-
-  const interval = timeEnd - timeStart
-
-  const div = useCallback(node => {
-    setWidth(node?.getBoundingClientRect().width)
+    return newItem ? copyThreads.sort(sort) : copyThreads
   }, [])
 
-  return (
-    <ItemListStyle ref={div} key={thread.threadId} justifyContent='flex-start' wrap='nowrap' gap={0}>
-      <ItemName>{thread.threadName}</ItemName>
-      {thread.threadIntervals.map(ti => {
-        const percenteOfInterval = (ti.start - timeStart) / interval
-        const pixelStart = percenteOfInterval * pixelInterval + 250
+  useEffect(() => {
+    let timer = setInterval(() => {
+      api
+        .redirectGet(id, `threaddump`, { headers: { Accept: 'application/json' } })
+        .then(({ data }: { data: { threads: ThreadDTO[] } }) => {
+          setThreads(oldIntervals => updateThreads(oldIntervals, data.threads))
+        })
+    }, 3 * 1000)
+    return () => clearTimeout(timer)
+  }, [id, setThreads, updateThreads])
 
-        const percenteOfIntervalEnd = (ti.end - timeStart) / interval
-        const pixelEnd = percenteOfIntervalEnd * pixelInterval - (pixelStart - 250)
-
-        let state = 'yellow'
-        if (ti.thread.threadState === 'RUNNABLE') {
-          state = 'green'
-        } else if (ti.thread.threadState === 'BLOCKED') {
-          state = 'red'
+  useEffect(() => {
+    let timer = setInterval(() => {
+      const now = moment.now()
+      setTimeEnd(oldTimeEnd => {
+        if (now > oldTimeEnd) {
+          const newTimeStart = now - 5 * 60 * 1000
+          setTimeStart(newTimeStart)
+          setThreads(oldThreads => {
+            const copyThreads = [...oldThreads]
+            copyThreads.forEach(t => (t.threadIntervals = t.threadIntervals.filter(ti => ti.end > newTimeStart)))
+            return copyThreads.filter(t => t.threadIntervals.length > 0)
+          })
+          return now
         }
+        return oldTimeEnd
+      })
+    }, 2 * 1000)
+    return () => clearTimeout(timer)
+  }, [setTimeStart, setTimeEnd])
 
-        return <ItemInterval start={pixelStart} end={pixelEnd} state={state} />
-      })}
-    </ItemListStyle>
-  )
+  return <ThreadList timeStart={timeStart} timeEnd={timeEnd} threads={threads} />
 }
-
-const ItemName = styled.div`
-  min-width: 250px;
-  max-width: 250px;
-  white-space: nowrap;
-`
-
-const ItemInterval = styled.div<{ start: number; end: number; state: string }>`
-  position: absolute;
-  left: ${p => p.start}px;
-  width: ${p => p.end}px;
-  background-color: ${p => p.state};
-  border-right: 2px solid var(--secondaryColor);
-  height: 20px;
-`
-
-const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
-  padding: 5px;
-  text-align: left;
-  width: 100%;
-  position: relative;
-
-  border-bottom: 2px solid var(--secondaryColor);
-
-  &:hover {
-    cursor: pointer;
-    background-color: var(--secondaryColor);
-  }
-
-  &::marker {
-    content: '';
-  }
-`

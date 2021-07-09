@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import api from '../../api'
 import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
 import { flatten } from '../../utils/objectUtils'
-import { InstaceParams } from '../InstanceMenu'
+import { InstanceParams } from '../InstanceMenu'
 import { PropertySource } from './PropertySource'
 
 export type PropertiesSources = {
@@ -19,7 +19,7 @@ export type EnvironmentDTO = {
 }
 
 export function Environment() {
-  const { id } = useParams<InstaceParams>()
+  const { id } = useParams<InstanceParams>()
   const [env, setEnv] = useState<EnvironmentDTO>()
   const [configs, setConfigs] = useState<EnvironmentDTO>()
   const { path, url } = useRouteMatch()

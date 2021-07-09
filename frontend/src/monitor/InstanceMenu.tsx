@@ -11,12 +11,12 @@ import { Geral } from './geral/Geral'
 import { Logging } from './log/Logging'
 import { Thread } from './thread/Thread'
 
-export type InstaceParams = {
+export type InstanceParams = {
   id: string
 }
 
 export default function InstanceMenu() {
-  const { id } = useParams<InstaceParams>()
+  const { id } = useParams<InstanceParams>()
   const { path, url } = useRouteMatch()
   const [instance, setInstance] = useState<InstanceDTO>()
 

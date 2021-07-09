@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import styled from 'styled-components'
 import api from '../../api'
-import { InstaceParams } from '../InstanceMenu'
+import { InstanceParams } from '../InstanceMenu'
 
 export function Logging() {
-  const { id } = useParams<InstaceParams>()
+  const { id } = useParams<InstanceParams>()
   const [log, setLog] = useState<string>()
 
   useEffect(() => {
