@@ -18,7 +18,7 @@ export function ThreadPoolMonitor({
   id,
   labelPoolName,
   requestPoolName,
-  width = '440px',
+  width = '400px',
   height = '200px',
 }: ThreadPoolMonitorProps) {
   const [corePool, setCorePool] = useState<number>(0)

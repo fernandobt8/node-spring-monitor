@@ -8,17 +8,28 @@ import { ThreadItemInterval } from './ThreadItemInterval'
 
 export const threaNameWidth = 250
 
-export function ThreadList({ timeStart, timeEnd, threads }: { timeStart: number; timeEnd: number; threads: ThreadOverTime[] }) {
+type ThreadListProps = {
+  timeStart: number
+  timeEnd: number
+  threads: ThreadOverTime[]
+  filterPackages: string
+}
+
+export function ThreadList({ threads, ...rest }: ThreadListProps) {
   return (
     <ul>
       {threads?.map(thread => (
-        <ItemList key={thread.threadId} timeStart={timeStart} timeEnd={timeEnd} thread={thread} />
+        <ItemList key={thread.threadId} thread={thread} {...rest} />
       ))}
     </ul>
   )
 }
 
-function ItemList({ thread, timeStart, timeEnd }: { thread: ThreadOverTime; timeStart: number; timeEnd: number }) {
+interface ItemListProps extends Omit<ThreadListProps, 'threads'> {
+  thread: ThreadOverTime
+}
+
+function ItemList({ thread, ...rest }: ItemListProps) {
   const [width, setWidth] = useState(null)
   const [threadStack, setThreadStack] = useState<ThreadDTO>()
 
@@ -42,9 +53,8 @@ function ItemList({ thread, timeStart, timeEnd }: { thread: ThreadOverTime; time
             ti={ti}
             threadId={thread.threadId}
             onClick={onIntervalClick}
-            timeStart={timeStart}
-            timeEnd={timeEnd}
             pixelInterval={width - threaNameWidth}
+            {...rest}
           />
         ))}
       </FlexBox>

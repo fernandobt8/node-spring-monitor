@@ -57,7 +57,8 @@ const ThreadInfo = styled(FlexBox)`
   padding: 10px;
 `
 const ThreadItemInfoContent = styled.div`
-  padding: 10px;
+  padding: 5px 10px 0px;
+  font-size: 14px;
 `
 const StackTraceStyle = styled.p`
   white-space: pre;

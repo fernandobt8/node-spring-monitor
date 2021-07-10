@@ -11,9 +11,12 @@ type ThreadItemIntervalProps = {
   timeStart: number
   timeEnd: number
   pixelInterval: number
+  filterPackages: string
 }
 
-export function ThreadItemInterval({ ti, threadId, onClick, timeStart, timeEnd, pixelInterval }: ThreadItemIntervalProps) {
+export function ThreadItemInterval(props: ThreadItemIntervalProps) {
+  const { ti, threadId, onClick, timeStart, timeEnd, pixelInterval, filterPackages: filter } = props
+
   const timeInterval = timeEnd - timeStart
 
   const percenteOfIntervalStart = (ti.start - timeStart) / timeInterval
@@ -30,9 +33,21 @@ export function ThreadItemInterval({ ti, threadId, onClick, timeStart, timeEnd, 
     state = 'red'
   }
 
+  const packageHint = filter
+    ? ti.thread
+        .printStackTrace()
+        .filter(st => st.startsWith(filter))
+        .slice(0, 3)
+        .join('\n')
+    : null
+
   return (
     <>
-      {ti.thread.brStackTrace && <ToolTip id={`${threadId}-${ti.start}`}>{ti.thread.brStackTrace}</ToolTip>}
+      {packageHint && (
+        <ToolTip id={`${threadId}-${ti.start}`}>
+          <p style={{ whiteSpace: 'pre', fontSize: '14px' }}>{packageHint}</p>
+        </ToolTip>
+      )}
       <ItemInterval
         key={`${threadId}-${ti.start}`}
         data-tip
@@ -52,15 +67,15 @@ const ItemInterval = styled.div.attrs<ItemIntervalProps>(props => ({
   style: {
     left: `${props.start}px`,
     width: `${props.end}px`,
-    backgroundColor: props.state,
   },
 }))<ItemIntervalProps>`
   position: absolute;
   height: 20px;
+  background-color: ${p => p.state};
 
   &:hover {
     cursor: pointer;
-    background-color: var(--secondaryColor);
+    filter: brightness(70%);
   }
 
   &::marker {

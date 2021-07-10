@@ -2,6 +2,8 @@ import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
+import { FlexBox } from '../../components/FlexBox'
+import { Input } from '../../components/Input'
 import { InstanceParams } from '../InstanceMenu'
 import { ThreadList } from './ThreadList'
 
@@ -39,11 +41,9 @@ export class ThreadDTO {
   waitedTime: number
   lockInfo?: { className: string; identityHashCode: number }
   stackTrace: StackTraceDTO[]
-  brStackTrace?: string
   public constructor(init?: Partial<ThreadDTO>) {
     Object.assign(this, init)
     this.stackTrace = init?.stackTrace.map(st => new StackTraceDTO({ ...st }))
-    this.brStackTrace = this.stackTrace.find(st => st.className.startsWith('br.'))?.print()
   }
   printStackTrace() {
     return this.stackTrace.map(sT => sT.print())
@@ -78,6 +78,8 @@ export function Thread() {
   const [threads, setThreads] = useState<ThreadOverTime[]>([])
   const [timeStart, setTimeStart] = useState(moment.now() - 1000)
   const [timeEnd, setTimeEnd] = useState(moment.now() + 5 * 60 * 1000 - 1000)
+  const [filterThreads, setFilterThreads] = useState<string>()
+  const [filterPackages, setFilterPackages] = useState<string>()
 
   const updateThreads = useCallback((oldThreads: ThreadOverTime[], newThreads: ThreadDTO[]) => {
     let copyThreads = [...oldThreads]
@@ -138,5 +140,24 @@ export function Thread() {
     return () => clearTimeout(timer)
   }, [setTimeStart, setTimeEnd])
 
-  return <ThreadList timeStart={timeStart} timeEnd={timeEnd} threads={threads} />
+  const filters = filterThreads?.split('|').map(f => f.trim())
+  const threadsFiltered = filterThreads ? threads.filter(t => filters.find(f => t.threadName.toLowerCase().includes(f))) : threads
+  return (
+    <>
+      <FlexBox justifyContent='flex-start'>
+        <Input
+          style={{ width: '400px' }}
+          onChange={e => setFilterThreads(e.target.value)}
+          placeholder='Filter threads, pipe for logical or'
+        />
+        <Input
+          style={{ width: '400px' }}
+          onChange={e => setFilterPackages(e.target.value)}
+          placeholder='Filter packages starts with for tooltip'
+        />
+      </FlexBox>
+      <div style={{ height: '10px' }} />
+      <ThreadList timeStart={timeStart} timeEnd={timeEnd} threads={threadsFiltered} filterPackages={filterPackages} />
+    </>
+  )
 }
