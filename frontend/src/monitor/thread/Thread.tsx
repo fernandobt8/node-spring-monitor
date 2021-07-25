@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
 import { FlexBox } from '../../components/FlexBox'
@@ -75,19 +75,18 @@ function sort(a: ThreadOverTime, b: ThreadOverTime) {
 
 export function Thread() {
   const { id } = useParams<InstanceParams>()
-  const [threads, setThreads] = useState<ThreadOverTime[]>([])
+  const [monitor, setMonitor] = useState<{ threads: ThreadOverTime[] }>({ threads: [] })
   const [timeStart, setTimeStart] = useState(moment.now() - 1000)
   const [timeEnd, setTimeEnd] = useState(moment.now() + 5 * 60 * 1000 - 1000)
   const [filterThreads, setFilterThreads] = useState<string>()
   const [filterPackages, setFilterPackages] = useState<string>()
 
-  const updateThreads = useCallback((oldThreads: ThreadOverTime[], newThreads: ThreadDTO[]) => {
-    let copyThreads = [...oldThreads]
+  const updateThreads = ({ threads }: { threads: ThreadOverTime[] }, newThreads: ThreadDTO[]) => {
     let currentTime = moment.now()
     let newItem = false
 
     newThreads.forEach(nt => {
-      let threadIntervals = copyThreads.find(t => t.threadId === nt.threadId)?.threadIntervals
+      let threadIntervals = threads.find(t => t.threadId === nt.threadId)?.threadIntervals
       let ntdto = new ThreadDTO(nt)
       if (threadIntervals) {
         let lastInterval = threadIntervals.pop()
@@ -98,7 +97,7 @@ export function Thread() {
           threadIntervals.push({ ...lastInterval, end: currentTime })
         }
       } else {
-        copyThreads.push({
+        threads.push({
           threadId: nt.threadId,
           threadName: nt.threadName,
           threadIntervals: [{ start: currentTime - 1000, end: currentTime, thread: ntdto }],
@@ -106,19 +105,19 @@ export function Thread() {
         newItem = true
       }
     })
-    return newItem ? copyThreads.sort(sort) : copyThreads
-  }, [])
+    return { threads: newItem ? threads.sort(sort) : threads }
+  }
 
+  // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
-      api
-        .redirectGet(id, `threaddump`, { headers: { Accept: 'application/json' } })
+      api.redirectGet(id, `threaddump`, { Accept: 'application/json' })
         .then(({ data }: { data: { threads: ThreadDTO[] } }) => {
-          setThreads(oldIntervals => updateThreads(oldIntervals, data.threads))
+          setMonitor(monitor => updateThreads(monitor, data.threads))
         })
-    }, 3 * 1000)
+    }, 2 * 1000)
     return () => clearTimeout(timer)
-  }, [id, setThreads, updateThreads])
+  }, [id, setMonitor])
 
   useEffect(() => {
     let timer = setInterval(() => {
@@ -127,10 +126,9 @@ export function Thread() {
         if (now > oldTimeEnd) {
           const newTimeStart = now - 5 * 60 * 1000
           setTimeStart(newTimeStart)
-          setThreads(oldThreads => {
-            const copyThreads = [...oldThreads]
-            copyThreads.forEach(t => (t.threadIntervals = t.threadIntervals.filter(ti => ti.end > newTimeStart)))
-            return copyThreads.filter(t => t.threadIntervals.length > 0)
+          setMonitor(monitor => {
+            monitor.threads.forEach(t => (t.threadIntervals = t.threadIntervals.filter(ti => ti.end > newTimeStart)))
+            return { threads: monitor.threads.filter(t => t.threadIntervals.length > 0) }
           })
           return now
         }
@@ -140,8 +138,15 @@ export function Thread() {
     return () => clearTimeout(timer)
   }, [setTimeStart, setTimeEnd])
 
-  const filters = filterThreads?.split('|').map(f => f.trim())
-  const threadsFiltered = filterThreads ? threads.filter(t => filters.find(f => t.threadName.toLowerCase().includes(f))) : threads
+  // prettier-ignore
+  const filters = useMemo(() => filterThreads?.toLowerCase().split('|').map(f => f.trim()), [filterThreads])
+
+  const threadsFiltered = useMemo(
+    () =>
+      filterThreads ? monitor.threads.filter(t => filters.find(f => t.threadName.toLowerCase().includes(f))) : monitor.threads,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters, monitor.threads.length]
+  )
   return (
     <>
       <FlexBox justifyContent='flex-start'>

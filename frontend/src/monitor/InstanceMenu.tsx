@@ -8,6 +8,7 @@ import { Uptime } from '../components/Uptime'
 import { InstanceDTO } from '../instances/InstancesList'
 import { Environment } from './env/Environment'
 import { Geral } from './geral/Geral'
+import { Jmx } from './jmx/Jmx'
 import { Logging } from './log/Logging'
 import { Thread } from './thread/Thread'
 
@@ -43,6 +44,7 @@ export default function InstanceMenu() {
           <NavTabStyled to={`${url}/geral`}>Geral</NavTabStyled>
           <NavTabStyled to={`${url}/thread`}>Threads</NavTabStyled>
           <NavTabStyled to={`${url}/log`}>Log</NavTabStyled>
+          <NavTabStyled to={`${url}/jmx`}>Jmx</NavTabStyled>
           <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
         </InstanceMenuTabs>
         <Container>
@@ -51,6 +53,7 @@ export default function InstanceMenu() {
             <Route path={`${path}/geral`} component={Geral} />
             <Route path={`${path}/thread`} component={Thread} />
             <Route path={`${path}/log`} component={Logging} />
+            <Route path={`${path}/jmx`} component={Jmx} />
             <Route path={`${path}/env`} component={Environment} />
           </Switch>
         </Container>

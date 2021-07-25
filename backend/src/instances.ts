@@ -66,6 +66,7 @@ export default class InstancesService {
     }
 
     let path = request.query.path
+    let headers = request.query.headers as string
 
     axios
       .get(`${instance.managementUrl}/${path}`, {
@@ -73,6 +74,7 @@ export default class InstancesService {
           username: instance.metadata['user.name'],
           password: instance.metadata['user.password'],
         },
+        headers: headers && JSON.parse(headers),
       })
       .then(({ data }) => {
         response.send(data)

@@ -12,8 +12,8 @@ const api: AxiosInstanceInternal = {
     api.get(`/redirect/instances/${id}`, {
       params: {
         path: path,
+        headers: others,
       },
-      ...others,
     }),
 }
 

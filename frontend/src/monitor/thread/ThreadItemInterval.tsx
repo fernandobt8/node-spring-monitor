@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { ToolTip } from '../../components/ToolTip'
 import { ThreadInterval } from './Thread'
@@ -14,6 +14,10 @@ type ThreadItemIntervalProps = {
   filterPackages: string
 }
 
+const states = ['yellow', 'green', 'red', 'yellow', 'yellow', 'yellow']
+const tStates = ['NEW', 'RUNNABLE', 'BLOCKED', 'WAITING', 'TIMED_WAITING', 'TERMINATED']
+const findState = (tState: string) => states[tStates.indexOf(tState)]
+
 export function ThreadItemInterval(props: ThreadItemIntervalProps) {
   const { ti, threadId, onClick, timeStart, timeEnd, pixelInterval, filterPackages: filter } = props
 
@@ -26,20 +30,10 @@ export function ThreadItemInterval(props: ThreadItemIntervalProps) {
   const percenteOfIntervalEnd = (ti.end - timeStart) / timeInterval
   const pixelEnd = percenteOfIntervalEnd * pixelInterval - (pixelStart - threaNameWidth) - 3
 
-  let state = 'yellow'
-  if (ti.thread.threadState === 'RUNNABLE') {
-    state = 'green'
-  } else if (ti.thread.threadState === 'BLOCKED') {
-    state = 'red'
-  }
-
-  const packageHint = filter
-    ? ti.thread
-        .printStackTrace()
-        .filter(st => st.startsWith(filter))
-        .slice(0, 3)
-        .join('\n')
-    : null
+  // prettier-ignore
+  const packageHint = useMemo(() => 
+      filter && ti.thread.printStackTrace().filter(st => st.startsWith(filter)).slice(0, 3).join('\n')
+  , [filter, ti.thread])
 
   return (
     <>
@@ -54,7 +48,7 @@ export function ThreadItemInterval(props: ThreadItemIntervalProps) {
         data-for={`${threadId}-${ti.start}`}
         start={pixelStart}
         end={pixelEnd}
-        state={state}
+        state={findState(ti.thread.threadState)}
         onClick={() => onClick(ti)}
       />
     </>
