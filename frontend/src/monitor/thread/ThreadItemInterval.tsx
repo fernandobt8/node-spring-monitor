@@ -14,7 +14,7 @@ type ThreadItemIntervalProps = {
   filterPackages: string
 }
 
-const states = ['yellow', 'green', 'red', 'yellow', 'yellow', 'yellow']
+const states = ['yellow', 'green', 'red', 'yellow', 'orange', 'yellow']
 const tStates = ['NEW', 'RUNNABLE', 'BLOCKED', 'WAITING', 'TIMED_WAITING', 'TERMINATED']
 const findState = (tState: string) => states[tStates.indexOf(tState)]
 

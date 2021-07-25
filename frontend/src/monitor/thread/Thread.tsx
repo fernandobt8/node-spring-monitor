@@ -7,7 +7,7 @@ import { Input } from '../../components/Input'
 import { InstanceParams } from '../InstanceMenu'
 import { ThreadList } from './ThreadList'
 
-export class StackTraceDTO {
+export type StackTraceDTO = {
   classLoaderName?: string
   className: string
   fileName?: string
@@ -16,12 +16,6 @@ export class StackTraceDTO {
   moduleName?: string
   moduleVersion?: string
   nativeMethod: boolean
-  public constructor(init?: Partial<StackTraceDTO>) {
-    Object.assign(this, init)
-  }
-  print() {
-    return `${this.className}.${this.methodName}(${this.fileName}:${this.lineNumber})`
-  }
 }
 
 export class ThreadDTO {
@@ -43,13 +37,12 @@ export class ThreadDTO {
   stackTrace: StackTraceDTO[]
   public constructor(init?: Partial<ThreadDTO>) {
     Object.assign(this, init)
-    this.stackTrace = init?.stackTrace.map(st => new StackTraceDTO({ ...st }))
   }
-  printStackTrace() {
-    return this.stackTrace.map(sT => sT.print())
+  printStackTrace(lenght: number = this.stackTrace.length) {
+    return this.stackTrace?.slice(0, lenght)?.map(st => `${st.className}.${st.methodName}(${st.fileName}:${st.lineNumber})`)
   }
-  stackTraceChanged(thread?: ThreadDTO) {
-    return this.stackTrace?.[0]?.print() !== thread?.stackTrace?.[0]?.print()
+  changed(thread?: ThreadDTO) {
+    return this.printStackTrace(1)[0] !== thread?.printStackTrace(1)[0] || this.threadState !== thread?.threadState
   }
 }
 
@@ -90,7 +83,7 @@ export function Thread() {
       let ntdto = new ThreadDTO(nt)
       if (threadIntervals) {
         let lastInterval = threadIntervals.pop()
-        if (lastInterval.thread.stackTraceChanged(ntdto)) {
+        if (lastInterval.thread.changed(ntdto)) {
           threadIntervals.push(lastInterval)
           threadIntervals.push({ start: lastInterval.end, end: currentTime, thread: ntdto })
         } else {

@@ -3,12 +3,11 @@ import styled from 'styled-components'
 import { FlexBox } from '../../components/FlexBox'
 
 export function JmxDomain(props: { [key: string]: any }) {
-  const [columnMaxWidth, setColumnMaxWidth] = useReducer((oldState, newState) => {
-    let temp = {}
-    if (newState.value && (!oldState[newState.key] || newState.value > oldState[newState.key])) {
-      temp[newState.key] = newState.value
+  const [columnMaxWidth, setColumnMaxWidth] = useReducer((oldState: { [key: string]: number }, { key, value }) => {
+    if (value && (!oldState[key] || value > oldState[key])) {
+      return { ...oldState, ...{ [key]: value } }
     }
-    return { ...oldState, ...temp }
+    return oldState
   }, {})
 
   const newLocal = Object.keys(props).map(row => row.split(',').map(v => v.split('=')))
@@ -38,11 +37,13 @@ export function JmxDomain(props: { [key: string]: any }) {
   return (
     <Table style={{ textAlign: 'left' }}>
       {newLocal.map(row => (
-        <FlexBox as='tr' justifyContent='flex-start'>
-          {row.map(attr => (
-            <TableColumn attr={attr} setColumnMaxWidth={setColumnMaxWidth} width={columnMaxWidth[attr[0]]} />
-          ))}
-        </FlexBox>
+        <tr>
+          <FlexBox justifyContent='flex-start'>
+            {row.map(attr => (
+              <TableColumn attr={attr} setColumnMaxWidth={setColumnMaxWidth} width={columnMaxWidth[attr[0]]} />
+            ))}
+          </FlexBox>
+        </tr>
       ))}
     </Table>
   )
@@ -52,10 +53,7 @@ function TableColumn({ attr, setColumnMaxWidth, width }) {
   const key = attr[0]
 
   const div = useCallback(
-    node => {
-      let w = node?.getBoundingClientRect()?.width
-      setColumnMaxWidth({ key: key, value: w })
-    },
+    node => setColumnMaxWidth({ key, value: node?.getBoundingClientRect()?.width }),
     [key, setColumnMaxWidth]
   )
 
@@ -70,10 +68,5 @@ function TableColumn({ attr, setColumnMaxWidth, width }) {
 
 const Table = styled.table`
   font-size: 15px;
-  table-layout: fixed;
   width: 100%;
-
-  > tr {
-    padding: 5px 0px;
-  }
 `

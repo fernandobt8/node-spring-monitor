@@ -51,9 +51,7 @@ const SideBar = styled(NavTab)`
   display: block;
   text-decoration: none;
   color: var(--primaryColor);
-  //   border-bottom: 2px solid var(--secondaryColor);
 
-  //   background-color: var(--secondaryColor);
   &:hover {
     cursor: pointer;
     background-color: var(--secondaryColor);

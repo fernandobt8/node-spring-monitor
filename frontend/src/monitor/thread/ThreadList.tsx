@@ -38,7 +38,7 @@ function ItemList({ thread, ...rest }: ItemListProps) {
   }, [])
 
   const onIntervalClick = (ti: ThreadInterval) =>
-    ti.thread.stackTraceChanged(threadStack) ? setThreadStack(ti.thread) : setThreadStack(null)
+    ti.thread.changed(threadStack) ? setThreadStack(ti.thread) : setThreadStack(null)
 
   return (
     <ThreadItem>
