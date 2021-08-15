@@ -60,9 +60,9 @@ const ThreadItemInfoContent = styled.div`
   padding: 5px 10px 0px;
   font-size: 14px;
 `
-const StackTraceStyle = styled.p`
-  white-space: pre;
+const StackTraceStyle = styled.pre`
   text-align: left;
+  font-size: 13px;
   overflow: auto;
   max-height: 230px;
   background-color: var(--secondaryColor);

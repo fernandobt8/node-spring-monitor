@@ -22,10 +22,10 @@ export function InstancesTable({ instances }: InstancesTableProps) {
 
 function ItemList(props: InstanceDTO) {
   const history = useHistory()
-  const { path } = useRouteMatch()
+  const { url } = useRouteMatch()
 
   function itemCliked() {
-    history.push(`${path}/${props.id}`)
+    history.push(`${url}/${props.id}`)
   }
 
   return (
@@ -65,9 +65,5 @@ const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
   &:hover {
     cursor: pointer;
     background-color: var(--secondaryColor);
-  }
-
-  &::marker {
-    content: '';
   }
 `

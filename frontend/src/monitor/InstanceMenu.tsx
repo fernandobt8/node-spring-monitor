@@ -49,7 +49,7 @@ export default function InstanceMenu() {
         </InstanceMenuTabs>
         <Container>
           <Switch>
-            <Route exact path={`${path}`} render={() => <Redirect to={`${url}/geral`} />} />
+            <Redirect exact from={`${path}`} to={`${url}/geral`} />
             <Route path={`${path}/geral`} component={Geral} />
             <Route path={`${path}/thread`} component={Thread} />
             <Route path={`${path}/log`} component={Logging} />

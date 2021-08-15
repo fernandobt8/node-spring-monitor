@@ -15,9 +15,9 @@ export function Logging() {
   return <Log>{log}</Log>
 }
 
-const Log = styled.p`
-  white-space: pre;
+const Log = styled.pre`
   text-align: left;
+  font-size: 12px;
   overflow: auto;
   height: calc(100vh - 190px);
 `

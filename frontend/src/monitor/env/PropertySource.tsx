@@ -10,7 +10,7 @@ export function PropertySource({ values, count }: { values?: PropertiesSources[]
   let innerCount = 0
 
   function renderKey(key: string) {
-    return key.length > 65 ? (
+    return key.length > 63 ? (
       <>
         <ToolTip id={`${count}-${innerCount}`}>{key}</ToolTip>
         <PropertySourceKey data-tip data-for={`${count}-${innerCount}`}>

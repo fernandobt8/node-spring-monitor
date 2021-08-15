@@ -56,7 +56,7 @@ export default class InstancesService {
     response.send(instance)
   }
 
-  async redirect(request: Request, response: Response) {
+  async redirectGet(request: Request, response: Response) {
     let id = request.params.id
     let instance = instances.find((ins) => ins.id === id)
 
@@ -70,6 +70,35 @@ export default class InstancesService {
 
     axios
       .get(`${instance.managementUrl}/${path}`, {
+        auth: {
+          username: instance.metadata['user.name'],
+          password: instance.metadata['user.password'],
+        },
+        headers: headers && JSON.parse(headers),
+      })
+      .then(({ data }) => {
+        response.send(data)
+      })
+      .catch((err) => {
+        console.log(err.status)
+        response.status(500).send()
+      })
+  }
+
+  async redirectPost(request: Request, response: Response) {
+    let id = request.params.id
+    let instance = instances.find((ins) => ins.id === id)
+
+    if (!instance) {
+      response.status(500).send()
+      return
+    }
+
+    let path = request.query.path
+    let headers = request.query.headers as string
+
+    axios
+      .post(`${instance.managementUrl}/${path}`, request.body, {
         auth: {
           username: instance.metadata['user.name'],
           password: instance.metadata['user.password'],

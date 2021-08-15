@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosPromise } from 'axios'
 
 interface AxiosInstanceInternal extends AxiosInstance {
   redirectGet(id: string, path: string, others?: any): AxiosPromise
+  redirectPost(id: string, path: string, data: any, others?: any): AxiosPromise
 }
 
 const api: AxiosInstanceInternal = {
@@ -10,6 +11,13 @@ const api: AxiosInstanceInternal = {
   }),
   redirectGet: (id: string, path: string, others?: any) =>
     api.get(`/redirect/instances/${id}`, {
+      params: {
+        path: path,
+        headers: others,
+      },
+    }),
+  redirectPost: (id: string, path: string, data: any, others?: any) =>
+    api.post(`/redirect/instances/${id}`, data, {
       params: {
         path: path,
         headers: others,

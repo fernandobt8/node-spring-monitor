@@ -10,6 +10,8 @@ routes.get('/instances', instances.list)
 
 routes.get('/instances/:id', instances.get)
 
-routes.get('/redirect/instances/:id', instances.redirect)
+routes.get('/redirect/instances/:id', instances.redirectGet)
+
+routes.post('/redirect/instances/:id', instances.redirectPost)
 
 export default routes

@@ -63,7 +63,7 @@ function ItemList({ thread, ...rest }: ItemListProps) {
   )
 }
 
-const ThreadItem = styled.div`
+const ThreadItem = styled.li`
   border-bottom: 2px solid var(--secondaryColor);
   padding: 5px;
   text-align: left;

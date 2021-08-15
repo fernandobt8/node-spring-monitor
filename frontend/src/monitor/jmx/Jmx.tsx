@@ -7,8 +7,39 @@ import { FlexBox } from '../../components/FlexBox'
 import { InstanceParams } from '../InstanceMenu'
 import { JmxDomain } from './JmxDomain'
 
+export type JmxDomainPropAttrDTO = {
+  type: string
+  desc: string
+  rw: boolean
+  value: any
+}
+
+export type JmxDomainPropOpDTO = {
+  args: {
+    type: string
+    name: string
+    desc: string
+  }[]
+  ret: string
+  desc: string
+}
+
+export type JmxDomainProp = {
+  props: string[][]
+  namePath: string
+  domain: string
+  mbean: string
+  attr: { [attr: string]: JmxDomainPropAttrDTO }
+  attrLoaded: boolean
+  op: { [op: string]: JmxDomainPropOpDTO }
+}
+
+export type JmxDomainDTO = {
+  [prop: string]: JmxDomainProp
+}
+
 type JmxDTO = {
-  [key: string]: any
+  [domain: string]: JmxDomainDTO
 }
 
 export function Jmx() {
@@ -18,7 +49,27 @@ export function Jmx() {
 
   useEffect(() => {
     api.redirectGet(id, 'jolokia/list', { Accept: 'application/json' }).then(({ data }) => {
-      console.log(data.value)
+      const jmxDto: JmxDTO = data.value
+      Object.keys(jmxDto).forEach(d => {
+        const domain = jmxDto[d]
+        const counts: { [key: string]: number } = {}
+        Object.keys(domain).forEach(prop => {
+          domain[prop].domain = d
+          domain[prop].mbean = prop
+          domain[prop].namePath = encodeURIComponent(prop.replaceAll(/\s|"|,|=/g, ''))
+          domain[prop].props = prop.split(',').map(v => v.split('='))
+          domain[prop].props.forEach(attr => (counts[attr[0]] = counts[attr[0]] ? counts[attr[0]] + 1 : 1))
+        })
+        // prettier-ignore
+        Object.keys(domain).forEach(prop => {
+          domain[prop].props.sort((a, b) => 
+            a[0] === 'type' ? -1
+            : b[0] === 'type' ? 1
+            : counts[a[0]] === counts[b[0]] ? a[0] > b[0] ? 1 : -1
+            : counts[a[0]] > counts[b[0]] ? -1 : 1
+          )
+        })
+      })
       setJmx(data.value)
     })
   }, [id, setJmx])

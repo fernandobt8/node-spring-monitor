@@ -39,7 +39,7 @@ export function ThreadItemInterval(props: ThreadItemIntervalProps) {
     <>
       {packageHint && (
         <ToolTip id={`${threadId}-${ti.start}`}>
-          <p style={{ whiteSpace: 'pre', fontSize: '14px' }}>{packageHint}</p>
+          <pre style={{ fontSize: '13px' }}>{packageHint}</pre>
         </ToolTip>
       )}
       <ItemInterval
