@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 
-export default function useOutsideClickEvent(ref, onOutsideClick) {
+export default function useOutsideClickEvent(node: any, onOutsideClick: (e: MouseEvent) => void) {
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (!node?.contains(event.target)) {
         onOutsideClick(event)
       }
     }
     document.addEventListener('click', handleClickOutside)
 
     return () => document.removeEventListener('click', handleClickOutside)
-  }, [ref, onOutsideClick])
+  }, [node, onOutsideClick])
 }

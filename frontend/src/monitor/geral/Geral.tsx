@@ -1,22 +1,25 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import { FlexBox } from '../../components/FlexBox'
-import { ThreadPoolMonitor } from '../../components/ThreadPoolMonitor'
+import { ThreadPoolMonitorMetrics } from '../../components/threadpool/ThreadPoolMonitorMetrics'
+import { ThreadPoolMonitorJmx } from '../../components/threadpool/ThreadPoolMonitorJmx'
 import { InstanceParams } from '../InstanceMenu'
 
 export function Geral() {
   const { id } = useParams<InstanceParams>()
 
+  // prettier-ignore
   return (
     <FlexBox justifyContent='flex-start'>
-      <ThreadPoolMonitor id={id} labelPoolName='HTTP' requestPoolName='pec.pool.app-http-nio' />
-      <ThreadPoolMonitor id={id} labelPoolName='Android' requestPoolName='pec.pool.android-http-nio' />
-      <ThreadPoolMonitor id={id} labelPoolName='MPI' requestPoolName='pec.pool.app-mpi' />
-      <ThreadPoolMonitor id={id} labelPoolName='Horus' requestPoolName='pec.pool.app-horus' />
-      <ThreadPoolMonitor id={id} labelPoolName='Relatório' requestPoolName='pec.pool.app-report' />
-      <ThreadPoolMonitor id={id} labelPoolName='Atmosphere async write' requestPoolName='pec.pool.atmosphere-async-write' />
-      <ThreadPoolMonitor id={id} labelPoolName='Atmosphere broadcaster' requestPoolName='pec.pool.atmosphere-broadcaster' />
-      <ThreadPoolMonitor id={id} labelPoolName='Atmosphere schedule' requestPoolName='pec.pool.atmosphere-scheduled' />
+      <ThreadPoolMonitorJmx id={id} labelPoolName='XNIO-1 task' requestPoolName='org.xnio:provider="nio",type=Xnio,worker="XNIO-1"' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Small Task' requestPoolName='pec.pool.small-task' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Integração' requestPoolName='pec.pool.integracao-http-nio' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='MPI' requestPoolName='pec.pool.app-mpi' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Horus' requestPoolName='pec.pool.app-horus' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Relatório' requestPoolName='pec.pool.app-report' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Atmosphere AsyncOp' requestPoolName='pec.pool.atmosphere-async-write' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Atmosphere DispatchOp' requestPoolName='pec.pool.atmosphere-broadcaster' />
+      <ThreadPoolMonitorMetrics id={id} labelPoolName='Atmosphere Schedule' requestPoolName='pec.pool.atmosphere-scheduled' />
     </FlexBox>
   )
 }
