@@ -50,5 +50,6 @@ function TableColumn({ attr, setColumnMaxWidth, width }) {
 }
 
 const Table = styled.ol`
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0px;
 `

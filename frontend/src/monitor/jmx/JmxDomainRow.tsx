@@ -28,8 +28,8 @@ export function JmxDomainRow({ jmxProp, children }: { jmxProp: JmxDomainProp; ch
         selected={selected}
         justifyContent='flex-start'
         onClick={e => {
-          beforeClick.current()
           if (selected) {
+            beforeClick.current()
             history.push(url)
           } else {
             history.push(`${url}/${jmxProp.namePath}/${jmxProp.attr ? 'attr' : 'op'}`)
@@ -81,7 +81,7 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
         </RowInfoHeader>
         <Switch>
           <Route path={`${path}/attr`}>
-            <JmxDomainAttr {...jmxProp} />
+            <JmxDomainAttr props={jmxProp} />
           </Route>
           <Route path={`${path}/op`}>
             <JmxDomainOp {...jmxProp} />

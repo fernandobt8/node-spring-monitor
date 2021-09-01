@@ -11,7 +11,8 @@ export type JmxDomainPropAttrDTO = {
   type: string
   desc: string
   rw: boolean
-  value: any
+  value: string
+  hint: string
 }
 
 export type JmxDomainPropOpDTO = {
@@ -76,7 +77,7 @@ export function Jmx() {
 
   return (
     <FlexBox justifyContent='flex-start' alignItems='flex-start' wrap='nowrap'>
-      <ul>
+      <ul style={{ flex: '0 0 auto' }}>
         {jmx &&
           Object.keys(jmx).map(key => (
             <SideBar key={key} to={`${url}/${key}`}>

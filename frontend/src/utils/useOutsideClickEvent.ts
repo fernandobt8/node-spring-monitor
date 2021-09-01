@@ -7,8 +7,8 @@ export default function useOutsideClickEvent(node: any, onOutsideClick: (e: Mous
         onOutsideClick(event)
       }
     }
-    document.addEventListener('click', handleClickOutside)
+    document.addEventListener('click', handleClickOutside, { capture: true })
 
-    return () => document.removeEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside, { capture: true })
   }, [node, onOutsideClick])
 }
