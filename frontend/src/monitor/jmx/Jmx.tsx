@@ -32,7 +32,7 @@ export type JmxDomainProp = {
   mbean: string
   attr: { [attr: string]: JmxDomainPropAttrDTO }
   attrLoaded: boolean
-  op: { [op: string]: JmxDomainPropOpDTO }
+  op: { [op: string]: JmxDomainPropOpDTO | JmxDomainPropOpDTO[] }
 }
 
 export type JmxDomainDTO = {

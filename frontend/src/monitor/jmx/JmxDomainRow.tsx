@@ -82,10 +82,10 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
         </RowInfoHeader>
         <Switch>
           <Route path={`${path}/attr`}>
-            <JmxDomainAttr props={jmxProp} updateHeight={updateHeight} />
+            <JmxDomainAttr jmxProp={jmxProp} updateHeight={updateHeight} />
           </Route>
           <Route path={`${path}/op`}>
-            <JmxDomainOp {...jmxProp} />
+            <JmxDomainOp jmxProp={jmxProp} />
           </Route>
         </Switch>
       </div>
@@ -107,6 +107,10 @@ const RowHeader = styled(FlexBox)<RowHeaderProps>`
   padding: 5px;
   background: ${p => (p.selected ? colors.secondary : colors.background)};
   transition: all ${`${transitionTime}ms`};
+
+  &:hover {
+    cursor: pointer;
+  }
 `
 const RowInfoHeader = styled(RowHeader)<RowHeaderProps>`
   padding: 5px 5px 0px;

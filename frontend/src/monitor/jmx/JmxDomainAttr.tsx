@@ -13,19 +13,19 @@ import { JmxDomainProp, JmxDomainPropAttrDTO } from './Jmx'
 const anyEnd = (value: string, ...endsWith: string[]) =>
   endsWith.reduce((prev, current) => value.endsWith(current) || prev, false)
 
-export function JmxDomainAttr({ props, updateHeight }: { props: JmxDomainProp; updateHeight: () => void }) {
+export function JmxDomainAttr({ jmxProp, updateHeight }: { jmxProp: JmxDomainProp; updateHeight: () => void }) {
   const { id } = useParams<InstanceParams>()
-  const [jmxProp, setJmxProp] = useState<JmxDomainProp>(props)
+  const [jmxPropValue, setJmxPropValue] = useState<JmxDomainProp>(jmxProp)
 
   useEffect(() => {
     api
       .redirectPost(id, `jolokia?`, {
         config: { ignoreErrors: true },
-        mbean: `${props.domain}:${props.mbean}`,
+        mbean: `${jmxProp.domain}:${jmxProp.mbean}`,
         type: 'read',
       })
       .then(({ data }) => {
-        setJmxProp(old => {
+        setJmxPropValue(old => {
           const newJmxProp = { ...old }
           Object.keys(data?.value).forEach(key => {
             if (newJmxProp.attr[key]) {
@@ -37,9 +37,9 @@ export function JmxDomainAttr({ props, updateHeight }: { props: JmxDomainProp; u
           return newJmxProp
         })
       })
-  }, [id, props.domain, props.mbean, setJmxProp])
+  }, [id, jmxProp.domain, jmxProp.mbean, setJmxPropValue])
 
-  const attrs = jmxProp?.attr
+  const attrs = jmxPropValue?.attr
   return (
     <Lista>
       {Object.keys(attrs).map(key => (
