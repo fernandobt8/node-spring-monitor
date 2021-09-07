@@ -54,8 +54,8 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
   const { path, url } = useRouteMatch()
   const history = useHistory()
 
-  const [selected, setSelected] = useState(false)
   const infoRef = useRef(null)
+  const [selected, setSelected] = useState(false)
   const [height, setHeight] = useState('auto')
 
   const outsideClick = useCallback(() => {
@@ -64,8 +64,9 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
   }, [history, jmxProp.namePath, url])
   useOutsideClickEvent(rowRef?.current, outsideClick)
 
+  const updateHeight = useCallback(() => setHeight(infoRef?.current?.getBoundingClientRect()?.height), [])
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => setHeight(infoRef?.current?.getBoundingClientRect()?.height))
+  useEffect(updateHeight)
 
   useEffect(() => {
     setSelected(true)
@@ -81,7 +82,7 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
         </RowInfoHeader>
         <Switch>
           <Route path={`${path}/attr`}>
-            <JmxDomainAttr props={jmxProp} />
+            <JmxDomainAttr props={jmxProp} updateHeight={updateHeight} />
           </Route>
           <Route path={`${path}/op`}>
             <JmxDomainOp {...jmxProp} />
