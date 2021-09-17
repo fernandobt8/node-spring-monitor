@@ -1,13 +1,34 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
+import Modal from 'react-modal'
 import styled from 'styled-components'
 import { Label } from '../../components/Label'
+import { colors } from '../../theme/colors'
 import { JmxDomainProp, JmxDomainPropOpDTO } from './Jmx'
+import { JmxDomainOpModal } from './JmxDomainOpModal'
 
 const opDTO = (k: string, jmxOp: JmxDomainPropOpDTO) => ({
-  name: `${k}(${jmxOp.args.map(arg => arg.type).join(', ')}): ${jmxOp.ret}`,
+  methodName: `${k}(${jmxOp.args.map(arg => arg.type).join(', ')}): ${jmxOp.ret}`,
+  operation: `${k}(${jmxOp.args.map(arg => arg.type).join(',')})`,
+  name: k,
+  ret: jmxOp.ret,
   args: jmxOp.args,
   desc: jmxOp.desc,
 })
+
+type JmxDomainOpArg = {
+  type: string
+  name: string
+  desc: string
+}
+
+export type JmxDomainOpRowDTO = {
+  methodName: string
+  operation: string
+  name: string
+  ret: string
+  args?: JmxDomainOpArg[]
+  desc: string
+}
 
 export function JmxDomainOp({ jmxProp }: { jmxProp: JmxDomainProp }) {
   const values = useMemo(
@@ -21,16 +42,40 @@ export function JmxDomainOp({ jmxProp }: { jmxProp: JmxDomainProp }) {
   return (
     <List>
       {values?.map(value => (
-        <>
-          <Row key={value.name}>
-            <Item>
-              <Label size='14px'>{value.name}</Label>
-            </Item>
-            <Label size='10px'>{value.desc}</Label>
-          </Row>
-        </>
+        <JmxDomainOpRow key={value.methodName} value={value} mbean={`${jmxProp.domain}:${jmxProp.mbean}`} />
       ))}
     </List>
+  )
+}
+
+const customStyles = {
+  overlay: {
+    backgroundColor: colors.secondaryRgba,
+  },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: colors.background,
+    color: colors.primary,
+  },
+}
+
+export function JmxDomainOpRow({ value, mbean }: { value: JmxDomainOpRowDTO; mbean: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <Row>
+      <Item onClick={() => setOpen(true)}>
+        <Label size='14px'>{value.methodName}</Label>
+      </Item>
+      {value.name !== value.desc && <Label size='10px'>{value.desc}</Label>}
+      <Modal isOpen={open} style={customStyles} onRequestClose={() => setOpen(false)}>
+        <JmxDomainOpModal value={value} mbean={mbean} />
+      </Modal>
+    </Row>
   )
 }
 

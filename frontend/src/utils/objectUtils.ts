@@ -18,3 +18,8 @@ export function flatten(data, prefix) {
   recurse(data, prefix)
   return result
 }
+
+export const anyEnd = (value: string, ...endsWith: string[]) =>
+  endsWith.reduce((prev, current) => value.endsWith(current) || prev, false)
+
+export const isPrimitive = (value: string) => anyEnd(value.toLowerCase(), 'int', 'long', 'boolean', 'string', 'double', 'float')

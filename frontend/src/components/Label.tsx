@@ -5,6 +5,7 @@ type LabelProps = {
   bold?: boolean
   padding?: string
   margin?: string
+  block?: boolean
 }
 
 export const Label = styled.label<LabelProps>`
@@ -12,4 +13,6 @@ export const Label = styled.label<LabelProps>`
   ${p => p.padding && `padding: ${p.padding};`}
   ${p => p.margin && `margin: ${p.margin};`}
   font-weight: ${p => (p.bold ? 'bold' : 'normal')};
+  cursor: inherit;
+  ${p => p.block && `display: block;`}
 `

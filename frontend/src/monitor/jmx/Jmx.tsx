@@ -51,19 +51,18 @@ export function Jmx() {
   useEffect(() => {
     api.redirectGet(id, 'jolokia/list', { Accept: 'application/json' }).then(({ data }) => {
       const jmxDto: JmxDTO = data.value
-      Object.keys(jmxDto).forEach(d => {
-        const domain = jmxDto[d]
+      Object.entries(jmxDto).forEach(([domainKey, domain]) => {
         const counts: { [key: string]: number } = {}
-        Object.keys(domain).forEach(prop => {
-          domain[prop].domain = d
-          domain[prop].mbean = prop
-          domain[prop].namePath = encodeURIComponent(prop.replaceAll(/\s|"|,|=/g, ''))
-          domain[prop].props = prop.split(',').map(v => v.split('='))
-          domain[prop].props.forEach(attr => (counts[attr[0]] = counts[attr[0]] ? counts[attr[0]] + 1 : 1))
+        Object.entries(domain).forEach(([propKey, prop]) => {
+          prop.domain = domainKey
+          prop.mbean = propKey
+          prop.namePath = encodeURIComponent(propKey.replaceAll(/\s|"|,|=/g, ''))
+          prop.props = propKey.split(',').map(v => v.split('='))
+          prop.props.forEach(attr => (counts[attr[0]] = counts[attr[0]] ? counts[attr[0]] + 1 : 1))
         })
         // prettier-ignore
-        Object.keys(domain).forEach(prop => {
-          domain[prop].props.sort((a, b) => 
+        Object.values(domain).forEach(propValue => {
+          propValue.props.sort((a, b) => 
             a[0] === 'type' ? -1
             : b[0] === 'type' ? 1
             : counts[a[0]] === counts[b[0]] ? a[0] > b[0] ? 1 : -1

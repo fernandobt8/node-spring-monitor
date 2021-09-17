@@ -6,6 +6,7 @@ import { Transition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
 import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
 import { colors } from '../../theme/colors'
+import useHeight from '../../utils/useHeight'
 import useOutsideClickEvent from '../../utils/useOutsideClickEvent'
 import { JmxDomainProp } from './Jmx'
 import { JmxDomainAttr } from './JmxDomainAttr'
@@ -20,7 +21,7 @@ export function JmxDomainRow({ jmxProp, children }: { jmxProp: JmxDomainProp; ch
   const history = useHistory()
   const beforeClick = useRef<() => void>(() => {})
 
-  const selected = location.pathname.startsWith(`${url}/${jmxProp.namePath}`)
+  const selected = location.pathname.startsWith(`${url}/${jmxProp.namePath}/`)
 
   return (
     <Row ref={rowRef} selected={selected}>
@@ -38,7 +39,7 @@ export function JmxDomainRow({ jmxProp, children }: { jmxProp: JmxDomainProp; ch
         {children}
       </RowHeader>
       <TransitionGroup>
-        <Transition key={selected} in={selected} timeout={transitionTime}>
+        <Transition key={selected} in={selected} timeout={transitionTime + 100}>
           <Switch location={location}>
             <Route path={`${path}/${jmxProp.namePath}`}>
               <JmxDomainRowInfo beforeClick={beforeClick} jmxProp={jmxProp} rowRef={rowRef} />
@@ -54,9 +55,7 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
   const { path, url } = useRouteMatch()
   const history = useHistory()
 
-  const infoRef = useRef(null)
   const [selected, setSelected] = useState(false)
-  const [height, setHeight] = useState('auto')
 
   const outsideClick = useCallback(() => {
     setSelected(false)
@@ -64,9 +63,7 @@ function JmxDomainRowInfo({ beforeClick, jmxProp, rowRef }: { beforeClick; jmxPr
   }, [history, jmxProp.namePath, url])
   useOutsideClickEvent(rowRef?.current, outsideClick)
 
-  const updateHeight = useCallback(() => setHeight(infoRef?.current?.getBoundingClientRect()?.height), [])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(updateHeight)
+  const [height, infoRef, updateHeight] = useHeight({ initialHeight: 'auto' })
 
   useEffect(() => {
     setSelected(true)

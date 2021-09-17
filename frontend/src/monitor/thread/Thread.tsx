@@ -143,13 +143,9 @@ export function Thread() {
   return (
     <>
       <FlexBox justifyContent='flex-start'>
+        <Input width='400px' onChange={e => setFilterThreads(e.target.value)} placeholder='Filter threads, pipe for logical or' />
         <Input
-          style={{ width: '400px' }}
-          onChange={e => setFilterThreads(e.target.value)}
-          placeholder='Filter threads, pipe for logical or'
-        />
-        <Input
-          style={{ width: '400px' }}
+          width='400px'
           onChange={e => setFilterPackages(e.target.value)}
           placeholder='Filter packages starts with for tooltip'
         />

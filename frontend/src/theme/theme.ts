@@ -5,7 +5,7 @@ import { colors } from './colors'
 export const GlobalStyle = createGlobalStyle`
   ${normalize}
 
-  #root {
+  body {
     --primaryColor: ${colors.primary};
     --secondaryColor: ${colors.secondary};
     --backgroundColor: ${colors.background};

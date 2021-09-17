@@ -3,15 +3,14 @@ import { useParams } from 'react-router'
 import styled from 'styled-components'
 import useResizeObserver from 'use-resize-observer'
 import api from '../../api'
-import { BreakLine } from '../../components/BreakLine'
+import { BreakFlexLine } from '../../components/BreakFlexLine'
 import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
 import { Label } from '../../components/Label'
 import { colors } from '../../theme/colors'
+import { isPrimitive } from '../../utils/objectUtils'
+import useHeight from '../../utils/useHeight'
 import { InstanceParams } from '../InstanceMenu'
 import { JmxDomainProp, JmxDomainPropAttrDTO } from './Jmx'
-
-const anyEnd = (value: string, ...endsWith: string[]) =>
-  endsWith.reduce((prev, current) => value.endsWith(current) || prev, false)
 
 export function JmxDomainAttr({ jmxProp, updateHeight }: { jmxProp: JmxDomainProp; updateHeight: () => void }) {
   const { id } = useParams<InstanceParams>()
@@ -51,14 +50,9 @@ export function JmxDomainAttr({ jmxProp, updateHeight }: { jmxProp: JmxDomainPro
 
 export function JmxDomainAttrRow(props: { name: string; attr: JmxDomainPropAttrDTO; updateHeight: () => void }) {
   const { name, attr, updateHeight } = props
-  const [valueHeight, setValueHeight] = useState(0)
   const valueRef = useRef(null)
   useResizeObserver({ ref: valueRef, onResize: () => updateHeight() })
-
-  useEffect(() => {
-    setValueHeight(valueRef?.current?.getBoundingClientRect()?.height)
-    updateHeight()
-  }, [attr.value, updateHeight])
+  const [valueHeight] = useHeight({ initialRef: valueRef, initialHeight: 0, deps: [attr.value] })
 
   return (
     <Row as='li' gap={0} wrap='wrap' key={name} justifyContent='flex-sart'>
@@ -66,7 +60,7 @@ export function JmxDomainAttrRow(props: { name: string; attr: JmxDomainPropAttrD
         {name}
       </Label>
 
-      {anyEnd(attr.type.toLowerCase(), 'int', 'long', 'boolean', 'string', 'double', 'float') ? (
+      {isPrimitive(attr.type) ? (
         <LabelValue size='15px' ref={valueRef} overHeight={valueHeight > 100}>
           {attr.value}
         </LabelValue>
@@ -78,8 +72,8 @@ export function JmxDomainAttrRow(props: { name: string; attr: JmxDomainPropAttrD
           </ValueObject>
         </>
       )}
-      <BreakLine />
-      <Label size='10px'>{attr.desc}</Label>
+      <BreakFlexLine />
+      {name !== attr.desc && <Label size='10px'>{attr.desc}</Label>}
     </Row>
   )
 }
