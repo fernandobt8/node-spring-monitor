@@ -32,8 +32,8 @@ export function Environment() {
     api.redirectGet(id, 'configprops').then(({ data }) => {
       let beans = data?.contexts?.application?.beans
       setConfigs({
-        propertySources: Object.keys(beans).map(key => {
-          return { name: key, properties: flatten(beans[key].properties, beans[key].prefix) }
+        propertySources: Object.entries(beans).map(([key, value]: [string, any]) => {
+          return { name: key, properties: flatten(value.properties, value.prefix) }
         }),
       })
     })

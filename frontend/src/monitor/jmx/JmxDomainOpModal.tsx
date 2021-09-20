@@ -62,18 +62,23 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
           ))}
         </ModalInputs>
         <Button onClick={() => execute()}>Execute</Button>
+        {response?.error && (
+          <ModalError>
+            <div>Execution Error</div>
+            <div>{response.error}</div>
+          </ModalError>
+        )}
+        {response?.status === 200 && (
+          <Label size='14px' padding='10px' backgroundColor='green' block margin='10px 0px 0px'>
+            Execution successfully
+          </Label>
+        )}
       </div>
       <ModalValue height={height}>
         {isPrimitive(value.ret)
           ? response?.value !== undefined && String(response.value)
           : JSON.stringify(response?.value, null, 2)}
       </ModalValue>
-      {response?.error && (
-        <ModalError>
-          <div>Execution Error</div>
-          <div>{response.error}</div>
-        </ModalError>
-      )}
     </ModalContent>
   )
 }
@@ -84,6 +89,7 @@ const ModalValue = styled.pre<{ height }>`
   font-size: 12px;
 `
 const ModalError = styled.div`
+  margin-top: 10px;
   font-size: 14px;
   background-color: red;
   padding: 10px;

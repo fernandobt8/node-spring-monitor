@@ -87,9 +87,9 @@ export function Jmx() {
 
       <Switch>
         {jmx &&
-          Object.keys(jmx).map(key => (
+          Object.entries(jmx).map(([key, value]) => (
             <Route key={key} path={`${path}/${key}`}>
-              <JmxDomain {...jmx[key]} />
+              <JmxDomain {...value} />
             </Route>
           ))}
       </Switch>

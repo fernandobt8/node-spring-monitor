@@ -37,10 +37,10 @@ export function PropertySource({ values, count }: { values?: PropertiesSources[]
       {values?.map(({ name, properties }) => (
         <PropertySourceContent borderColor={colors.secondary} key={name}>
           <PropertySourceHeader>{name}</PropertySourceHeader>
-          {Object.keys(properties).map(key => (
+          {Object.entries(properties).map(([key, value]) => (
             <PropertySourceItem key={`${count}-${++innerCount}`} justifyContent='flex-start' wrap='nowrap' gap={0}>
               {renderKey(key)}
-              {renderValue(properties[key])}
+              {renderValue(value)}
             </PropertySourceItem>
           ))}
         </PropertySourceContent>

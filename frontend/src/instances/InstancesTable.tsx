@@ -35,10 +35,10 @@ function ItemList(props: InstanceDTO) {
         <div>{props.name}</div>
         <div>{props.serviceUrl}</div>
       </Name>
-      <div style={{ minWidth: 120 }}>{props.version || '0.0.0'}</div>
+      <div style={{ minWidth: 120 }}>{props.version ?? '0.0.0'}</div>
       <div>
         <div>Sessions</div>
-        <div>{props.sessions || 0}</div>
+        <div>{props.sessions ?? 0}</div>
       </div>
       <div>
         <div>Uptime</div>

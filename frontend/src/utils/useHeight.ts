@@ -9,7 +9,7 @@ type HeightOpts = {
 type HeightReturn = [number | string, (node: HTMLElement) => void, () => void]
 
 export default function useHeight(opts?: HeightOpts): HeightReturn {
-  const { initialRef, initialHeight, deps } = opts || {}
+  const { initialRef, initialHeight, deps } = opts ?? {}
 
   const ref = useRef<HTMLElement>(null)
   const [height, setHeight] = useState<number | string>(initialHeight)

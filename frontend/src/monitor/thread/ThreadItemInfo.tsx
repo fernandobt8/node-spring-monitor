@@ -40,9 +40,9 @@ export function ThreadItemInfo({ thread }: { thread: ThreadDTO }) {
             <div>Lock owner name:</div>
           </FlexBox>
           <FlexBox alignItems='flex-start' flexDirection='column' gap={10}>
-            <div>{thread.lockName || '-'}</div>
+            <div>{thread.lockName ?? '-'}</div>
             <div>{thread.lockOwnerId}</div>
-            <div>{thread.lockOwnerName || '-'}</div>
+            <div>{thread.lockOwnerName ?? '-'}</div>
           </FlexBox>
         </FlexBox>
       </ThreadInfo>

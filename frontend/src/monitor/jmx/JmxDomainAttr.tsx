@@ -26,11 +26,9 @@ export function JmxDomainAttr({ jmxProp, updateHeight }: { jmxProp: JmxDomainPro
       .then(({ data }) => {
         setJmxPropValue(old => {
           const newJmxProp = { ...old }
-          Object.keys(data?.value).forEach(key => {
+          Object.entries(data?.value).forEach(([key, value]) => {
             if (newJmxProp.attr[key]) {
-              const attr = newJmxProp.attr[key]
-              const value = data.value[key]
-              attr.value = JSON.stringify(value, null, 2)
+              newJmxProp.attr[key].value = JSON.stringify(value, null, 2)
             }
           })
           return newJmxProp
@@ -41,8 +39,8 @@ export function JmxDomainAttr({ jmxProp, updateHeight }: { jmxProp: JmxDomainPro
   const attrs = jmxPropValue?.attr
   return (
     <Lista>
-      {Object.keys(attrs).map(key => (
-        <JmxDomainAttrRow key={key} name={key} attr={attrs[key]} updateHeight={updateHeight} />
+      {Object.entries(attrs).map(([key, value]) => (
+        <JmxDomainAttrRow key={key} name={key} attr={value} updateHeight={updateHeight} />
       ))}
     </Lista>
   )

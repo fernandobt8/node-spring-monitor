@@ -11,13 +11,7 @@ export function JmxDomain(props: JmxDomainDTO) {
     return oldState
   }, {})
 
-  const rows = useMemo(
-    () =>
-      Object.keys(props)
-        .map(row => props[row])
-        .sort((a, b) => (a.props.length > b.props.length ? 1 : -1)),
-    [props]
-  )
+  const rows = useMemo(() => Object.values(props).sort((a, b) => (a.props.length > b.props.length ? 1 : -1)), [props])
 
   return (
     <Table style={{ textAlign: 'left' }}>

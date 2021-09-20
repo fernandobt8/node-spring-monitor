@@ -2,7 +2,7 @@ import React from 'react'
 
 export function Uptime({ time = 0 }: { time?: number }) {
   // get total seconds between the times
-  var delta = time || 0 / 1000
+  var delta = time ?? 0 / 1000
 
   // calculate (and subtract) whole days
   var days = Math.floor(delta / 86400)

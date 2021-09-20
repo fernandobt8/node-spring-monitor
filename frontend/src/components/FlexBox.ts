@@ -16,5 +16,5 @@ export const FlexBox = styled.div<FlexBoxProps>`
   align-items: ${p => p.alignItems || 'center'};
   align-content: ${p => p.alignContent || 'normal'};
   flex-wrap: ${p => p.wrap || 'wrap'};
-  gap: ${p => (p.gap !== undefined ? p.gap : 20)}px;
+  gap: ${p => p.gap ?? 20}px;
 `
