@@ -30,7 +30,7 @@ export default function InstancesList() {
   const [data, setData] = useState<InstanceDTO[]>([])
 
   useEffect(() => {
-    api.get('/instances').then(result => {
+    api.instances().then(result => {
       setData(result.data)
     })
   }, [])

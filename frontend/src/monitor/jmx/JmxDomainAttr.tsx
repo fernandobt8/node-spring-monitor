@@ -17,11 +17,11 @@ export function JmxDomainAttr({ jmxProp, updateHeight }: { jmxProp: JmxDomainPro
   const [jmxPropValue, setJmxPropValue] = useState<JmxDomainProp>(jmxProp)
 
   useEffect(() => {
-    api
-      .redirectPost(id, `jolokia?`, {
-        config: { ignoreErrors: true },
+    api.jmx
+      .post(id, {
         mbean: `${jmxProp.domain}:${jmxProp.mbean}`,
         type: 'read',
+        config: { ignoreErrors: true },
       })
       .then(({ data }) => {
         setJmxPropValue(old => {

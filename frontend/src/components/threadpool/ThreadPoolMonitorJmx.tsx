@@ -21,10 +21,10 @@ export function ThreadPoolMonitorJmx(props: ThreadPoolMonitorProps) {
   // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
-      api.redirectPost(id, `jolokia?`, {
-        config: { ignoreErrors: true },
+      api.jmx.post(id,  {
         mbean: requestPoolName,
         type: 'read',
+        config: { ignoreErrors: true },
       })
       .then(({ data }) => {
         setCorePool(data?.value?.CoreWorkerPoolSize)

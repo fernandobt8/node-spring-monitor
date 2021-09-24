@@ -104,7 +104,7 @@ export function Thread() {
   // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
-      api.redirectGet(id, `threaddump`, { Accept: 'application/json' })
+      api.threadDump(id)
         .then(({ data }: { data: { threads: ThreadDTO[] } }) => {
           setMonitor(monitor => updateThreads(monitor, data.threads))
         })

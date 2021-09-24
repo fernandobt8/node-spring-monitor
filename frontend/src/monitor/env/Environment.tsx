@@ -25,11 +25,11 @@ export function Environment() {
   const { path, url } = useRouteMatch()
 
   useEffect(() => {
-    api.redirectGet(id, 'env').then(({ data }) => setEnv(data))
+    api.env(id).then(({ data }) => setEnv(data))
   }, [id])
 
   useEffect(() => {
-    api.redirectGet(id, 'configprops').then(({ data }) => {
+    api.configProps(id).then(({ data }) => {
       let beans = data?.contexts?.application?.beans
       setConfigs({
         propertySources: Object.entries(beans).map(([key, value]: [string, any]) => {

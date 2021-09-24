@@ -76,11 +76,11 @@ export default class InstancesService {
         },
         headers: headers && JSON.parse(headers),
       })
-      .then(({ data }) => {
-        response.send(data)
+      .then(({ data, headers }) => {
+        response.send({ headers, body: data })
       })
       .catch((err) => {
-        console.log(err.status)
+        console.log(err)
         response.status(500).send()
       })
   }

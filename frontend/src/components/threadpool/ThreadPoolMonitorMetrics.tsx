@@ -20,14 +20,14 @@ export function ThreadPoolMonitorMetrics(props: ThreadPoolMonitorProps) {
 
   // prettier-ignore
   useEffect(() => {
-    api.redirectGet(id, `metrics/${requestPoolName}?tag=prop:core-pool`)
+    api.metrics(id, requestPoolName, 'prop:core-pool')
       .then(({ data }) => setCorePool(data?.measurements[0]?.value))
   }, [id, requestPoolName])
 
   // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
-      api.redirectGet(id, `metrics/${requestPoolName}?tag=prop:active`)
+      api.metrics(id, requestPoolName, 'prop:active')
       .then(({ data }) => {
         setActives(oldActives => {
           if (oldActives.length >= 100) {

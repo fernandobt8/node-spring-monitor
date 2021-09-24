@@ -18,8 +18,8 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
   const [height, ref] = useHeight({ initialHeight: 0 })
 
   function execute() {
-    api
-      .redirectPost(id, `jolokia?`, {
+    api.jmx
+      .post(id, {
         arguments: args,
         mbean: mbean,
         operation: value.operation,
@@ -43,7 +43,7 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
         </LabelHeader>
         <ModalInputs>
           {value.args?.map((arg, index) => (
-            <div>
+            <div key={index}>
               <div>
                 <Label size='15px'>{`${arg.name}: `}</Label>
                 <Label size='12px'>{arg.type}</Label>
@@ -62,16 +62,16 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
           ))}
         </ModalInputs>
         <Button onClick={() => execute()}>Execute</Button>
+        {response?.status === 200 && (
+          <Label size='14px' padding='10px' backgroundColor='green' block margin='10px 0px 0px'>
+            Execution successfully
+          </Label>
+        )}
         {response?.error && (
           <ModalError>
             <div>Execution Error</div>
             <div>{response.error}</div>
           </ModalError>
-        )}
-        {response?.status === 200 && (
-          <Label size='14px' padding='10px' backgroundColor='green' block margin='10px 0px 0px'>
-            Execution successfully
-          </Label>
         )}
       </div>
       <ModalValue height={height}>
@@ -88,6 +88,7 @@ const ModalValue = styled.pre<{ height }>`
   max-height: calc(90vh - ${p => p.height}px);
   font-size: 12px;
 `
+
 const ModalError = styled.div`
   margin-top: 10px;
   font-size: 14px;

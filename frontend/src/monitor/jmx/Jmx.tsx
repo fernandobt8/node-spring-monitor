@@ -49,7 +49,7 @@ export function Jmx() {
   const [jmx, setJmx] = useState<JmxDTO>()
 
   useEffect(() => {
-    api.redirectGet(id, 'jolokia/list', { Accept: 'application/json' }).then(({ data }) => {
+    api.jmx.list(id).then(({ data }) => {
       const jmxDto: JmxDTO = data.value
       Object.entries(jmxDto).forEach(([domainKey, domain]) => {
         const counts: { [key: string]: number } = {}
