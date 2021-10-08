@@ -1,18 +1,20 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import api from '../../api'
-import { ThreadPoolMonitor } from './ThreadPoolMonitor'
+import { InstanceParams } from '../InstanceMenu'
+import { LineChart } from '../../components/LineChart'
 
 type ThreadPoolMonitorProps = {
-  id: string
-  labelPoolName: string
+  labelName: string
   requestPoolName: string
   width?: string
   height?: string
 }
 
 export function ThreadPoolMonitorJmx(props: ThreadPoolMonitorProps) {
-  const { id, requestPoolName } = props
+  const { id } = useParams<InstanceParams>()
+  const { requestPoolName } = props
   const [corePool, setCorePool] = useState<number>(0)
   const [actives, setActives] = useState<{ time: string; value: number }[]>([
     { time: moment(moment.now()).format('HH:mm:ss'), value: 0 },
@@ -46,5 +48,7 @@ export function ThreadPoolMonitorJmx(props: ThreadPoolMonitorProps) {
     return () => clearTimeout(timer)
   }, [id, requestPoolName])
 
-  return <ThreadPoolMonitor {...props} actives={actives} corePool={corePool} />
+  return (
+    <LineChart {...props} actives={actives} maxY={corePool} formatter={(v: number): [string, string] => [`${v}`, 'actives']} />
+  )
 }

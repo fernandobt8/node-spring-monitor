@@ -1,33 +1,38 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import api from '../../api'
-import { ThreadPoolMonitor } from './ThreadPoolMonitor'
+import { InstanceParams } from '../InstanceMenu'
+import { LineChart } from '../../components/LineChart'
 
-type ThreadPoolMonitorProps = {
-  id: string
-  labelPoolName: string
-  requestPoolName: string
+type LineChartProps = {
+  labelName: string
+  metric: string
+  metricYtag: string
+  metricXtag: string
   width?: string
   height?: string
+  formatter?: (value, name?, props?) => string | [string, string]
 }
 
-export function ThreadPoolMonitorMetrics(props: ThreadPoolMonitorProps) {
-  const { id, requestPoolName } = props
-  const [corePool, setCorePool] = useState<number>(0)
+export function LineChartMetrics(props: LineChartProps) {
+  const { id } = useParams<InstanceParams>()
+  const { metric, metricYtag, metricXtag } = props
+  const [maxY, setMaxY] = useState<number>(0)
   const [actives, setActives] = useState<{ time: string; value: number }[]>([
     { time: moment(moment.now()).format('HH:mm:ss'), value: 0 },
   ])
 
   // prettier-ignore
   useEffect(() => {
-    api.metrics(id, requestPoolName, 'prop:core-pool')
-      .then(({ data }) => setCorePool(data?.measurements[0]?.value))
-  }, [id, requestPoolName])
+    api.metrics(id, metric, metricYtag)
+      .then(({ data }) => setMaxY(data?.measurements[0]?.value))
+  }, [id, metric, metricYtag])
 
   // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
-      api.metrics(id, requestPoolName, 'prop:active')
+      api.metrics(id, metric, metricXtag)
       .then(({ data }) => {
         setActives(oldActives => {
           if (oldActives.length >= 100) {
@@ -44,7 +49,7 @@ export function ThreadPoolMonitorMetrics(props: ThreadPoolMonitorProps) {
       }).catch(({data}) => {console.log('erro')})
     }, 3 * 1000)
     return () => clearTimeout(timer)
-  }, [id, requestPoolName])
+  }, [id, metric, metricXtag])
 
-  return <ThreadPoolMonitor {...props} actives={actives} corePool={corePool} />
+  return <LineChart {...props} actives={actives} maxY={maxY} />
 }

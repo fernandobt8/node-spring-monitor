@@ -1,22 +1,23 @@
 import React from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import styled from 'styled-components'
-import { colors } from '../../theme/colors'
-import { BorderRadius } from '../../theme/styles'
+import { colors } from '../theme/colors'
+import { BorderRadius } from '../theme/styles'
 
-type ThreadPoolMonitorProps = {
-  actives: { time: string; value: number }[]
-  corePool: number
-  labelPoolName: string
+type LineChartProps = {
+  actives: { time: string; value: number; value2?: number }[]
+  maxY: number
+  labelName: string
   width?: string
   height?: string
+  formatter?: (value, name?, props?) => string | [string, string]
 }
 
-export function ThreadPoolMonitor(props: ThreadPoolMonitorProps) {
-  const { actives, corePool, labelPoolName, width = '400px', height = '200px' } = props
+export function LineChart(props: LineChartProps) {
+  const { actives, maxY, labelName, width = '400px', height = '200px', formatter } = props
   return (
     <ChartCss style={{ height: height, width: width }}>
-      <div>{labelPoolName}</div>
+      <div>{labelName}</div>
       <ResponsiveContainerStyle width='100%' height='100%'>
         <AreaChart
           width={500}
@@ -41,12 +42,14 @@ export function ThreadPoolMonitor(props: ThreadPoolMonitorProps) {
             }}
           />
           <YAxis
-            domain={[0, corePool]}
+            domain={[0, maxY]}
             axisLine={{ stroke: colors.primary }}
             tickLine={{ stroke: colors.primary }}
             tick={{ strokeWidth: '0.1', fill: colors.primary, stroke: colors.primary }}
           />
-          <Tooltip />
+          <Tooltip formatter={formatter} contentStyle={{ backgroundColor: colors.background }} />
+
+          <Area type='linear' dataKey='value2' stroke='#ffff33' fill='RGBA(255,255,51,0.2)' />
           <Area type='linear' dataKey='value' stroke='#50D0F6' fill='#50D0F6' />
         </AreaChart>
       </ResponsiveContainerStyle>
