@@ -5,12 +5,10 @@ interface AxiosInstanceInternal extends AxiosInstance {
   redirectPost(id: string, path: string, data: any, config?: AxiosRequestConfig): AxiosPromise
 }
 
-const api: AxiosInstanceInternal = {
-  ...axios.create({
-    baseURL: 'http://localhost:8000',
-  }),
+export const api: AxiosInstanceInternal = {
+  ...axios.create(),
   redirectGet: (id: string, path: string, headers?: any, config?: AxiosRequestConfig) =>
-    api.get(`/redirect/instances/${id}`, {
+    api.get(`/api/redirect/instances/${id}`, {
       ...config,
       params: {
         path: path,
@@ -19,7 +17,7 @@ const api: AxiosInstanceInternal = {
       },
     }),
   redirectPost: (id: string, path: string, data: any, config?: AxiosRequestConfig) =>
-    api.post(`/redirect/instances/${id}`, data, {
+    api.post(`/api/redirect/instances/${id}`, data, {
       ...config,
       params: {
         path: path,
@@ -51,7 +49,7 @@ export default {
 
   jmx: jmx,
 
-  instance: (id: string) => api.get(`/instances/${id}`),
+  instance: (id: string) => api.get(`/api/instances/${id}`),
 
-  instances: () => api.get('/instances'),
+  instances: () => api.get('/api/instances'),
 }
