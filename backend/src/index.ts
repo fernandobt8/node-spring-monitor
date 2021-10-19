@@ -1,6 +1,7 @@
 import cookieSession from 'cookie-session'
 import express from 'express'
 import passport from 'passport'
+import path from 'path'
 import routes from './routes'
 
 const app = express()
@@ -20,7 +21,9 @@ app.use(passport.session())
 
 app.use(routes)
 
-app.get('/', (req, res) => res.send('Express + TypeScript Server'))
+app.use(express.static(path.join(__dirname, '../../frontend/build')))
+
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../../frontend/build/index.html')))
 
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`)

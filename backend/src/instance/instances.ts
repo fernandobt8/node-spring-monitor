@@ -1,31 +1,7 @@
 import axios from 'axios'
 import crypto from 'crypto'
 import { Request, Response } from 'express'
-
-enum InstanceStatus {
-  CONNECTED = 'CONNECTED',
-  DOWN = 'DOWN',
-}
-
-type InstanceDTO = {
-  id: string
-  name: string
-  managementUrl: string
-  healthUrl: string
-  serviceUrl: string
-  metadata: {
-    'user.name': string
-    'user.password': string
-    startup: string
-    tags: {
-      environment: string
-    }
-  }
-  status: InstanceStatus
-  version: string
-  sessions: number
-  uptime: number
-}
+import { InstanceDTO, InstanceStatus } from './instanceTypes'
 
 const instances: InstanceDTO[] = []
 
@@ -115,57 +91,31 @@ export default class InstancesService {
   }
 }
 
-setInterval(() => {
-  instances.forEach((instance) =>
-    axios
-      .get(`${instance.managementUrl}/info`, {
-        auth: {
-          username: instance.metadata['user.name'],
-          password: instance.metadata['user.password'],
-        },
-      })
-      .then(({ data }) => {
-        instance.status = InstanceStatus.CONNECTED
-        instance.version = data.build.version
-      })
-      .catch((err) => {
-        instance.status = InstanceStatus.DOWN
-      })
-  )
-}, 60 * 1000)
+const configMonitor = [
+  { path: '/info', onlyConnected: false, field: 'version', value: (data) => data.build.version },
+  { path: '/metrics/pec.sessions', onlyConnected: true, field: 'sessions', value: (data) => data?.measurements[0]?.value },
+  { path: '/metrics/process.uptime', onlyConnected: true, field: 'uptime', value: (data) => data?.measurements[0]?.value },
+]
 
 setInterval(() => {
-  instances.forEach((instance) =>
-    axios
-      .get(`${instance.managementUrl}/metrics/pec.sessions`, {
-        auth: {
-          username: instance.metadata['user.name'],
-          password: instance.metadata['user.password'],
-        },
-      })
-      .then(({ data }) => {
-        instance.sessions = data?.measurements[0]?.value
-      })
-      .catch((err) => {
-        instance.status = InstanceStatus.DOWN
-      })
-  )
-}, 60 * 1000)
-
-setInterval(() => {
-  instances.forEach((instance) =>
-    axios
-      .get(`${instance.managementUrl}/metrics/process.uptime`, {
-        auth: {
-          username: instance.metadata['user.name'],
-          password: instance.metadata['user.password'],
-        },
-      })
-      .then(({ data }) => {
-        instance.uptime = data?.measurements[0]?.value
-      })
-      .catch((err) => {
-        instance.status = InstanceStatus.DOWN
-      })
+  configMonitor.forEach((config) =>
+    instances
+      .filter((i) => (config.onlyConnected ? i.status === InstanceStatus.CONNECTED : true))
+      .forEach((instance) =>
+        axios
+          .get(`${instance.managementUrl}${config.path}`, {
+            auth: {
+              username: instance.metadata['user.name'],
+              password: instance.metadata['user.password'],
+            },
+          })
+          .then(({ data }) => {
+            instance.status = InstanceStatus.CONNECTED
+            instance[config.field] = config.value(data)
+          })
+          .catch((err) => {
+            instance.status = InstanceStatus.DOWN
+          })
+      )
   )
 }, 60 * 1000)
