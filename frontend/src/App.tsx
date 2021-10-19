@@ -40,7 +40,7 @@ function App() {
         return (
           <>
             <Bar justifyContent='flex-end'>
-              <Link to='/instances'>
+              <Link to='/apps'>
                 <Label bold>Applications</Label>
               </Link>
               <a href='/api/logout'>
@@ -48,9 +48,9 @@ function App() {
               </a>
             </Bar>
             <Switch>
-              <Route path='/instances' component={InstancesList} exact />
-              <Route path='/instances/:id' component={InstanceMenu} />
-              <Redirect from='/' to='/instances' exact />
+              <Route path='/apps' component={InstancesList} exact />
+              <Route path='/apps/:id' component={InstanceMenu} />
+              <Redirect from='/' to='/apps' exact />
             </Switch>
           </>
         )
