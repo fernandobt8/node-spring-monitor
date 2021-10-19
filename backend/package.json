@@ -15,6 +15,7 @@
     "cookie-session": "^1.4.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
+    "https": "^1.0.0",
     "passport": "^0.5.0",
     "passport-google-oauth20": "^2.0.0"
   },

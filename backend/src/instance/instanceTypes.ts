@@ -1,7 +1,4 @@
-export enum InstanceStatus {
-  CONNECTED = 'CONNECTED',
-  DOWN = 'DOWN',
-}
+export type InstanceStatus = 'CONNECTED' | 'DOWN'
 
 export type InstanceDTO = {
   id: string

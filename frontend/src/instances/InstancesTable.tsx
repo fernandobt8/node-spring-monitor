@@ -30,7 +30,7 @@ function ItemList(props: InstanceDTO) {
 
   return (
     <ItemListStyle as='li' onClick={itemCliked} key={props.name} justifyContent={'space-around'}>
-      <div>{InstanceStatus[props.status]}</div>
+      <div>{props.status === 'CONNECTED' ? 'U' : 'D'}</div>
       <Name>
         <div>{props.name}</div>
         <div>{props.serviceUrl}</div>
@@ -40,7 +40,7 @@ function ItemList(props: InstanceDTO) {
         <div>Sessions</div>
         <div>{props.sessions ?? 0}</div>
       </div>
-      <div>
+      <div style={{ minWidth: '110px' }}>
         <div>Uptime</div>
         <Uptime time={props.uptime} />
       </div>

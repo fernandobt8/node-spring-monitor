@@ -1,6 +1,7 @@
 import axios from 'axios'
 import crypto from 'crypto'
 import { Request, Response } from 'express'
+import { api } from '../api'
 import { InstanceDTO, InstanceStatus } from './instanceTypes'
 
 const instances: InstanceDTO[] = []
@@ -13,7 +14,7 @@ export default class InstancesService {
 
     const index = instances.findIndex((ins) => ins.id === id)
     if (index === -1) {
-      instances.push({ ...instance, id: id, status: InstanceStatus.DOWN })
+      instances.push({ ...instance, id: id, status: 'DOWN' })
     } else {
       instances[index] = { ...instances[index], ...instance }
     }
@@ -44,7 +45,7 @@ export default class InstancesService {
     let path = request.query.path
     let headers = request.query.headers as string
 
-    axios
+    api
       .get(`${instance.managementUrl}/${path}`, {
         auth: {
           username: instance.metadata['user.name'],
@@ -73,7 +74,7 @@ export default class InstancesService {
     let path = request.query.path
     let headers = request.query.headers as string
 
-    axios
+    api
       .post(`${instance.managementUrl}/${path}`, request.body, {
         auth: {
           username: instance.metadata['user.name'],
@@ -100,9 +101,9 @@ const configMonitor = [
 setInterval(() => {
   configMonitor.forEach((config) =>
     instances
-      .filter((i) => (config.onlyConnected ? i.status === InstanceStatus.CONNECTED : true))
+      .filter((i) => (config.onlyConnected ? i.status === 'CONNECTED' : true))
       .forEach((instance) =>
-        axios
+        api
           .get(`${instance.managementUrl}${config.path}`, {
             auth: {
               username: instance.metadata['user.name'],
@@ -110,11 +111,11 @@ setInterval(() => {
             },
           })
           .then(({ data }) => {
-            instance.status = InstanceStatus.CONNECTED
+            instance.status = 'CONNECTED'
             instance[config.field] = config.value(data)
           })
           .catch((err) => {
-            instance.status = InstanceStatus.DOWN
+            instance.status = 'DOWN'
           })
       )
   )
