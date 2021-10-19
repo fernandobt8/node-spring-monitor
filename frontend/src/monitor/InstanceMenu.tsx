@@ -67,7 +67,7 @@ const Container = styled.div`
 `
 
 const Header = styled(FlexBox)<FlexBoxProps>`
-  padding: 30px 0px;
+  padding: 15px 0px;
   font-size: 20px;
 `
 

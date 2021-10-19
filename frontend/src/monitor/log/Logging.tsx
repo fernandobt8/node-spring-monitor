@@ -5,7 +5,7 @@ import api from '../../api'
 import { FlexBox } from '../../components/FlexBox'
 import { Input } from '../../components/Input'
 import { Label } from '../../components/Label'
-import useHeight from '../../utils/useHeight'
+import useHeight from '../../hooks/useHeight'
 import { InstanceParams } from '../InstanceMenu'
 
 const MB = 1024 * 1024

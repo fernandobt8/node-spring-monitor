@@ -1,10 +1,8 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import styled from 'styled-components'
 import api from '../../api'
 import { LineChart } from '../../components/LineChart'
-import { BorderRadius } from '../../theme/styles'
 import { InstanceParams } from '../InstanceMenu'
 
 const valueFor = (v: number) => v.fixed(2)

@@ -1,8 +1,17 @@
-import React, { useCallback } from 'react'
-import GoogleLogin from 'react-google-login'
-import { api } from '../api'
+import React from 'react'
+import styled from 'styled-components'
 import { Logged } from '../App'
+import { BorderRadius } from '../theme/styles'
 
 export function Login({ setLogged }: { setLogged: (e: Logged) => void }) {
-  return <a href='/api/auth'>login</a>
+  return <LoginButton href='/api/auth'>Log in with Google</LoginButton>
 }
+
+const LoginButton = styled.a`
+  ${BorderRadius}
+  text-decoration: none;
+  color: var(--primaryColor);
+  display: inline-block;
+  padding: 10px;
+  margin-top: calc(100vh - 70vh);
+`

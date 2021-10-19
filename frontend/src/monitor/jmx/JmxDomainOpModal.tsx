@@ -7,7 +7,7 @@ import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
 import { Label } from '../../components/Label'
 import { isPrimitive } from '../../utils/objectUtils'
-import useHeight from '../../utils/useHeight'
+import useHeight from '../../hooks/useHeight'
 import { InstanceParams } from '../InstanceMenu'
 import { JmxDomainOpRowDTO } from './JmxDomainOp'
 

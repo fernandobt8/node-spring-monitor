@@ -8,7 +8,7 @@ import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
 import { Label } from '../../components/Label'
 import { colors } from '../../theme/colors'
 import { isPrimitive } from '../../utils/objectUtils'
-import useHeight from '../../utils/useHeight'
+import useHeight from '../../hooks/useHeight'
 import { InstanceParams } from '../InstanceMenu'
 import { JmxDomainProp, JmxDomainPropAttrDTO } from './Jmx'
 

@@ -57,5 +57,5 @@ function ItemHeader({ label, value }: { label: string; value?: number }) {
 }
 
 const Header = styled(FlexBox)<FlexBoxProps>`
-  padding: 50px 0px;
+  padding: 20px 0px;
 `

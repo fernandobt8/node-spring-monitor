@@ -1,22 +1,12 @@
-import express from 'express'
-import cors from 'cors'
-import routes from './routes'
-import cookieParser from 'cookie-parser'
-import passport from 'passport'
 import cookieSession from 'cookie-session'
+import express from 'express'
+import passport from 'passport'
+import routes from './routes'
 
 const app = express()
 const PORT = 8000
 
 app.use(express.json())
-// app.use(
-//   cors({
-//     origin: '*',
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-//     credentials: true,
-//   })
-// )
-app.use(cookieParser())
 
 app.use(
   cookieSession({
@@ -28,7 +18,7 @@ app.use(
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use('/api', routes)
+app.use(routes)
 
 app.get('/', (req, res) => res.send('Express + TypeScript Server'))
 
