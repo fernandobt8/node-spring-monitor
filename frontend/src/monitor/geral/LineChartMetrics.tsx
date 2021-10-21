@@ -1,9 +1,10 @@
-import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import { AxiosResponse } from 'axios'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
-import { InstanceParams } from '../InstanceMenu'
 import { LineChart } from '../../components/LineChart'
+import { useActivesInterval } from '../../hooks/useActivesInterval'
+import { InstanceParams } from '../InstanceMenu'
 
 type LineChartProps = {
   labelName: string
@@ -19,9 +20,6 @@ export function LineChartMetrics(props: LineChartProps) {
   const { id } = useParams<InstanceParams>()
   const { metric, metricYtag, metricXtag } = props
   const [maxY, setMaxY] = useState<number>(0)
-  const [actives, setActives] = useState<{ time: string; value: number }[]>([
-    { time: moment(moment.now()).format('HH:mm:ss'), value: 0 },
-  ])
 
   // prettier-ignore
   useEffect(() => {
@@ -29,27 +27,10 @@ export function LineChartMetrics(props: LineChartProps) {
       .then(({ data }) => setMaxY(data?.measurements[0]?.value))
   }, [id, metric, metricYtag])
 
-  // prettier-ignore
-  useEffect(() => {
-    let timer = setInterval(() => {
-      api.metrics(id, metric, metricXtag)
-      .then(({ data }) => {
-        setActives(oldActives => {
-          if (oldActives.length >= 100) {
-            oldActives.shift()
-          }
-          return [
-            ...oldActives,
-            {
-              time: moment(moment.now()).format('HH:mm:ss'),
-              value: data?.measurements[0]?.value,
-            },
-          ]
-        })
-      }).catch(({data}) => {console.log('erro')})
-    }, 3 * 1000)
-    return () => clearTimeout(timer)
-  }, [id, metric, metricXtag])
+  const apiMetrics = useCallback(() => [api.metrics(id, metric, metricXtag)], [id, metric, metricXtag])
+  const onResponse = useCallback((response: AxiosResponse[]) => ({ value: response[0].data?.measurements[0]?.value }), [])
+
+  const actives = useActivesInterval(apiMetrics, onResponse)
 
   return <LineChart {...props} actives={actives} maxY={maxY} />
 }

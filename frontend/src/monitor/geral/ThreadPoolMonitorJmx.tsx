@@ -1,9 +1,10 @@
-import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import { AxiosResponse } from 'axios'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
-import { InstanceParams } from '../InstanceMenu'
 import { LineChart } from '../../components/LineChart'
+import { useActivesInterval } from '../../hooks/useActivesInterval'
+import { InstanceParams } from '../InstanceMenu'
 
 type ThreadPoolMonitorProps = {
   labelName: string
@@ -16,37 +17,31 @@ export function ThreadPoolMonitorJmx(props: ThreadPoolMonitorProps) {
   const { id } = useParams<InstanceParams>()
   const { requestPoolName } = props
   const [corePool, setCorePool] = useState<number>(0)
-  const [actives, setActives] = useState<{ time: string; value: number }[]>([
-    { time: moment(moment.now()).format('HH:mm:ss'), value: 0 },
-  ])
 
-  // prettier-ignore
-  useEffect(() => {
-    let timer = setInterval(() => {
-      api.jmx.post(id,  {
+  const apiMetrics = useCallback(
+    () => [
+      api.jmx.post(id, {
         mbean: requestPoolName,
         type: 'read',
         config: { ignoreErrors: true },
-      })
+      }),
+    ],
+    [id, requestPoolName]
+  )
+
+  useEffect(() => {
+    apiMetrics()[0]
       .then(({ data }) => {
         setCorePool(data?.value?.CoreWorkerPoolSize)
-        
-        setActives(oldActives => {
-          if (oldActives.length >= 100) {
-            oldActives.shift()
-          }
-          return [
-            ...oldActives,
-            {
-              time: moment(moment.now()).format('HH:mm:ss'),
-              value: data?.value?.BusyWorkerThreadCount,
-            },
-          ]
-        })
-      }).catch(({data}) => {console.log('erro')})
-    }, 3 * 1000)
-    return () => clearTimeout(timer)
-  }, [id, requestPoolName])
+      })
+      .catch(({ data }) => {
+        console.log('erro')
+      })
+  }, [apiMetrics])
+
+  const onResponse = useCallback((responses: AxiosResponse[]) => ({ value: responses[0].data?.value?.BusyWorkerThreadCount }), [])
+
+  const actives = useActivesInterval(apiMetrics, onResponse)
 
   return (
     <LineChart {...props} actives={actives} maxY={corePool} formatter={(v: number): [string, string] => [`${v}`, 'actives']} />
