@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
 import { FlexBox } from '../../components/FlexBox'
@@ -73,6 +73,7 @@ export function Thread() {
   const [timeEnd, setTimeEnd] = useState(moment.now() + 5 * 60 * 1000 - 1000)
   const [filterThreads, setFilterThreads] = useState<string>()
   const [filterPackages, setFilterPackages] = useState<string>()
+  const requesting = useRef(false)
 
   const updateThreads = ({ threads }: { threads: ThreadOverTime[] }, newThreads: ThreadDTO[]) => {
     let currentTime = moment.now()
@@ -104,10 +105,15 @@ export function Thread() {
   // prettier-ignore
   useEffect(() => {
     let timer = setInterval(() => {
+      if (requesting.current) {
+        return
+      }
+      requesting.current = true
       api.threadDump(id)
         .then(({ data }: { data: { threads: ThreadDTO[] } }) => {
           setMonitor(monitor => updateThreads(monitor, data.threads))
         })
+        .finally(() => (requesting.current = false))
     }, 2 * 1000)
     return () => clearTimeout(timer)
   }, [id, setMonitor])

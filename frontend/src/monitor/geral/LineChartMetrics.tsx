@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, CancelToken } from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
@@ -23,11 +23,14 @@ export function LineChartMetrics(props: LineChartProps) {
 
   // prettier-ignore
   useEffect(() => {
-    api.metrics(id, metric, metricYtag)
+    api.metrics(id, metric, [metricYtag])
       .then(({ data }) => setMaxY(data?.measurements[0]?.value))
   }, [id, metric, metricYtag])
 
-  const apiMetrics = useCallback(() => [api.metrics(id, metric, metricXtag)], [id, metric, metricXtag])
+  const apiMetrics = useCallback(
+    (cancelToken: CancelToken) => [api.metrics(id, metric, [metricXtag], cancelToken)],
+    [id, metric, metricXtag]
+  )
   const onResponse = useCallback((response: AxiosResponse[]) => ({ value: response[0].data?.measurements[0]?.value }), [])
 
   const actives = useActivesInterval(apiMetrics, onResponse)

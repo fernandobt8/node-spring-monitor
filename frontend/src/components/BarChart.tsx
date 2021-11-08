@@ -29,7 +29,7 @@ export function MemoryBarChart() {
 
   useEffect(() => {
     names.forEach(({ name }, index) =>
-      api.metrics(id, 'jvm.memory.used', 'area:nonheap', `id:${name}`).then(({ data }) =>
+      api.metrics(id, 'jvm.memory.used', ['area:nonheap', `id:${name}`]).then(({ data }) =>
         setData(oldData => {
           const newData = [...oldData]
           newData[index] = { ...newData[index], used: Number(data?.measurements[0]?.value / MB).fixed(2) }
@@ -39,7 +39,7 @@ export function MemoryBarChart() {
     )
 
     names.forEach(({ name }, index) =>
-      api.metrics(id, 'jvm.memory.max', 'area:nonheap', `id:${name}`).then(({ data }) =>
+      api.metrics(id, 'jvm.memory.max', ['area:nonheap', `id:${name}`]).then(({ data }) =>
         setData(oldData => {
           const newData = [...oldData]
           newData[index] = { ...newData[index], max: data?.measurements[0]?.value / MB }

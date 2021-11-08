@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, CancelToken } from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
@@ -17,11 +17,14 @@ export function MemoryLineChart() {
 
   // prettier-ignores
   useEffect(() => {
-    api.metrics(id, 'jvm.memory.max', 'area:heap').then(({ data }) => setMaxY(valueFor(data?.measurements[0]?.value)))
+    api.metrics(id, 'jvm.memory.max', ['area:heap']).then(({ data }) => setMaxY(valueFor(data?.measurements[0]?.value)))
   }, [id])
 
   const apiMetrics = useCallback(
-    () => [api.metrics(id, 'jvm.memory.used', 'area:heap'), api.metrics(id, 'jvm.memory.committed', 'area:heap')],
+    (cancelToken: CancelToken) => [
+      api.metrics(id, 'jvm.memory.used', ['area:heap'], cancelToken),
+      api.metrics(id, 'jvm.memory.committed', ['area:heap'], cancelToken),
+    ],
     [id]
   )
   const onResponse = useCallback(

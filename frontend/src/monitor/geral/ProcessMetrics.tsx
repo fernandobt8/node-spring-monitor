@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, CancelToken } from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
@@ -17,7 +17,13 @@ export function ProcessMetrics() {
     api.metrics(id, 'system.cpu.count').then(({ data }) => setCpuCount(data?.measurements[0]?.value))
   }, [id])
 
-  const apiMetrics = useCallback(() => [api.metrics(id, 'process.cpu.usage'), api.metrics(id, 'system.cpu.usage')], [id])
+  const apiMetrics = useCallback(
+    (cancelToken: CancelToken) => [
+      api.metrics(id, 'process.cpu.usage', [], cancelToken),
+      api.metrics(id, 'system.cpu.usage', [], cancelToken),
+    ],
+    [id]
+  )
   const onResponse = useCallback(
     (responses: AxiosResponse[]) => ({
       value: valueFor(responses[0].data?.measurements[0]?.value),

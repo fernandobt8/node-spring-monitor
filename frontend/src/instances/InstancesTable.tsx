@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Uptime } from '../components/Uptime'
 import { BorderRadius } from '../theme/styles'
-import { InstanceDTO, InstanceStatus } from './InstancesList'
+import { InstanceDTO } from './InstancesList'
 
 type InstancesTableProps = {
   instances: InstanceDTO[]

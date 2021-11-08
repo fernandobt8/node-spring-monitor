@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosResponse, CancelToken } from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../../api'
@@ -19,18 +19,22 @@ export function ThreadPoolMonitorJmx(props: ThreadPoolMonitorProps) {
   const [corePool, setCorePool] = useState<number>(0)
 
   const apiMetrics = useCallback(
-    () => [
-      api.jmx.post(id, {
-        mbean: requestPoolName,
-        type: 'read',
-        config: { ignoreErrors: true },
-      }),
+    (cancelToken: CancelToken) => [
+      api.jmx.post(
+        id,
+        {
+          mbean: requestPoolName,
+          type: 'read',
+          config: { ignoreErrors: true },
+        },
+        cancelToken
+      ),
     ],
     [id, requestPoolName]
   )
 
   useEffect(() => {
-    apiMetrics()[0]
+    apiMetrics(undefined)[0]
       .then(({ data }) => {
         setCorePool(data?.value?.CoreWorkerPoolSize)
       })

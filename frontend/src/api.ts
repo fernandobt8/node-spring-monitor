@@ -1,51 +1,47 @@
-import axios, { AxiosInstance, AxiosPromise, AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, CancelToken } from 'axios'
 
-interface AxiosInstanceInternal extends AxiosInstance {
-  redirectGet(id: string, path: string, others?: any, config?: AxiosRequestConfig): AxiosPromise
-  redirectPost(id: string, path: string, data: any, config?: AxiosRequestConfig): AxiosPromise
+export const api = axios.create()
+
+function redirectGet(id: string, path: string, headers?: any, config?: AxiosRequestConfig) {
+  return api.get(`/api/redirect/instances/${id}`, {
+    ...config,
+    params: {
+      path: path,
+      headers,
+      ...config?.params,
+    },
+  })
 }
-
-export const api: AxiosInstanceInternal = {
-  ...axios.create(),
-  redirectGet: (id: string, path: string, headers?: any, config?: AxiosRequestConfig) =>
-    api.get(`/api/redirect/instances/${id}`, {
-      ...config,
-      params: {
-        path: path,
-        headers,
-        ...config?.params,
-      },
-    }),
-  redirectPost: (id: string, path: string, data: any, config?: AxiosRequestConfig) =>
-    api.post(`/api/redirect/instances/${id}`, data, {
-      ...config,
-      params: {
-        path: path,
-        ...config?.params,
-      },
-    }),
+function redirectPost(id: string, path: string, data: any, config?: AxiosRequestConfig) {
+  return api.post(`/api/redirect/instances/${id}`, data, {
+    ...config,
+    params: {
+      path: path,
+      ...config?.params,
+    },
+  })
 }
 
 const transformResponse = [].concat(axios.defaults.transformResponse, data => data?.body)
 
 const jmx = {
-  list: (id: string) => api.redirectGet(id, 'jolokia/list', { Accept: 'application/json' }, { transformResponse }),
+  list: (id: string) => redirectGet(id, 'jolokia/list', { Accept: 'application/json' }, { transformResponse }),
 
-  post: (id: string, mBeanDTO: any) => api.redirectPost(id, `jolokia`, mBeanDTO, {}),
+  post: (id: string, mBeanDTO: any, cancelToken?: CancelToken) => redirectPost(id, `jolokia`, mBeanDTO, { cancelToken }),
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  metrics: (id: string, name: string, ...tags: string[]) =>
-    api.redirectGet(id, `metrics/${name}?tag=${tags.join('&tag=')}`, {}, { transformResponse }),
+  metrics: (id: string, name: string, tags?: string[], cancelToken?: CancelToken) =>
+    redirectGet(id, `metrics/${name}${tags ? `?tag=${tags.join('&tag=')}` : ''}`, {}, { transformResponse, cancelToken }),
 
-  env: (id: string) => api.redirectGet(id, 'env', {}, { transformResponse }),
+  env: (id: string) => redirectGet(id, 'env', {}, { transformResponse }),
 
-  configProps: (id: string) => api.redirectGet(id, 'configprops', {}, { transformResponse }),
+  configProps: (id: string) => redirectGet(id, 'configprops', {}, { transformResponse }),
 
-  logFile: (id: string, headers: any) => api.redirectGet(id, 'logfile', headers),
+  logFile: (id: string, headers: any) => redirectGet(id, 'logfile', headers),
 
-  threadDump: (id: string) => api.redirectGet(id, `threaddump`, { Accept: 'application/json' }, { transformResponse }),
+  threadDump: (id: string) => redirectGet(id, `threaddump`, { Accept: 'application/json' }, { transformResponse }),
 
   jmx: jmx,
 
