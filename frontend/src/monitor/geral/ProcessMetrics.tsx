@@ -14,13 +14,13 @@ export function ProcessMetrics() {
   const [cpuCount, setCpuCount] = useState<number>(0)
 
   useEffect(() => {
-    api.metrics(id, 'system.cpu.count').then(({ data }) => setCpuCount(data?.measurements[0]?.value))
+    api.metrics.get(id, 'system.cpu.count').then(({ data }) => setCpuCount(data?.measurements[0]?.value))
   }, [id])
 
   const apiMetrics = useCallback(
     (cancelToken: CancelToken) => [
-      api.metrics(id, 'process.cpu.usage', [], cancelToken),
-      api.metrics(id, 'system.cpu.usage', [], cancelToken),
+      api.metrics.get(id, 'process.cpu.usage', [], cancelToken),
+      api.metrics.get(id, 'system.cpu.usage', [], cancelToken),
     ],
     [id]
   )

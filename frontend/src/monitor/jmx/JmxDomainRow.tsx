@@ -39,7 +39,7 @@ export function JmxDomainRow({ jmxProp, children }: { jmxProp: JmxDomainProp; ch
         {children}
       </RowHeader>
       <TransitionGroup>
-        <Transition key={selected} in={selected} timeout={transitionTime + 100}>
+        <Transition key={selected + ''} in={selected} timeout={transitionTime + 100}>
           <Switch location={location}>
             <Route path={`${path}/${jmxProp.namePath}`}>
               <JmxDomainRowInfo beforeClick={beforeClick} jmxProp={jmxProp} rowRef={rowRef} />

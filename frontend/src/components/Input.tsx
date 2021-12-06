@@ -19,6 +19,6 @@ const InputStyle = styled.input<InputProps>`
 
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 2px 2px #50d0f6;
+    box-shadow: 0 0 2px 2px var(--blueColor);
   }
 `

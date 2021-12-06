@@ -9,6 +9,7 @@ export const GlobalStyle = createGlobalStyle`
     --primaryColor: ${colors.primary};
     --secondaryColor: ${colors.secondary};
     --backgroundColor: ${colors.background};
+    --blueColor: ${colors.blue};
   }
 
   html, body, #root {

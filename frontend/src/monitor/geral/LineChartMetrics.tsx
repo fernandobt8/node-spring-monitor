@@ -23,12 +23,12 @@ export function LineChartMetrics(props: LineChartProps) {
 
   // prettier-ignore
   useEffect(() => {
-    api.metrics(id, metric, [metricYtag])
+    api.metrics.get(id, metric, [metricYtag])
       .then(({ data }) => setMaxY(data?.measurements[0]?.value))
   }, [id, metric, metricYtag])
 
   const apiMetrics = useCallback(
-    (cancelToken: CancelToken) => [api.metrics(id, metric, [metricXtag], cancelToken)],
+    (cancelToken: CancelToken) => [api.metrics.get(id, metric, [metricXtag], cancelToken)],
     [id, metric, metricXtag]
   )
   const onResponse = useCallback((response: AxiosResponse[]) => ({ value: response[0].data?.measurements[0]?.value }), [])

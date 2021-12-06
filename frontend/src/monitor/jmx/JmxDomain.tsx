@@ -6,7 +6,7 @@ import { JmxDomainRow } from './JmxDomainRow'
 export function JmxDomain(props: JmxDomainDTO) {
   const [columnMaxWidth, setColumnMaxWidth] = useReducer((oldState: { [key: string]: number }, { key, value }) => {
     if (value && (!oldState[key] || value > oldState[key])) {
-      return { ...oldState, ...{ [key]: value } }
+      return { ...oldState, [key]: value }
     }
     return oldState
   }, {})

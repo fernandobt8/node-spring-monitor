@@ -17,13 +17,13 @@ export function MemoryLineChart() {
 
   // prettier-ignores
   useEffect(() => {
-    api.metrics(id, 'jvm.memory.max', ['area:heap']).then(({ data }) => setMaxY(valueFor(data?.measurements[0]?.value)))
+    api.metrics.get(id, 'jvm.memory.max', ['area:heap']).then(({ data }) => setMaxY(valueFor(data?.measurements[0]?.value)))
   }, [id])
 
   const apiMetrics = useCallback(
     (cancelToken: CancelToken) => [
-      api.metrics(id, 'jvm.memory.used', ['area:heap'], cancelToken),
-      api.metrics(id, 'jvm.memory.committed', ['area:heap'], cancelToken),
+      api.metrics.get(id, 'jvm.memory.used', ['area:heap'], cancelToken),
+      api.metrics.get(id, 'jvm.memory.committed', ['area:heap'], cancelToken),
     ],
     [id]
   )

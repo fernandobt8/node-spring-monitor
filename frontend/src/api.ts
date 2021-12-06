@@ -24,16 +24,14 @@ function redirectPost(id: string, path: string, data: any, config?: AxiosRequest
 
 const transformResponse = [].concat(axios.defaults.transformResponse, data => data?.body)
 
-const jmx = {
-  list: (id: string) => redirectGet(id, 'jolokia/list', { Accept: 'application/json' }, { transformResponse }),
-
-  post: (id: string, mBeanDTO: any, cancelToken?: CancelToken) => redirectPost(id, `jolokia`, mBeanDTO, { cancelToken }),
-}
-
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  metrics: (id: string, name: string, tags?: string[], cancelToken?: CancelToken) =>
-    redirectGet(id, `metrics/${name}${tags ? `?tag=${tags.join('&tag=')}` : ''}`, {}, { transformResponse, cancelToken }),
+  metrics: {
+    get: (id: string, name: string, tags?: string[], cancelToken?: CancelToken) =>
+      redirectGet(id, `metrics/${name}${tags ? `?tag=${tags.join('&tag=')}` : ''}`, {}, { transformResponse, cancelToken }),
+
+    list: (id: string) => redirectGet(id, 'metrics', {}, { transformResponse }),
+  },
 
   env: (id: string) => redirectGet(id, 'env', {}, { transformResponse }),
 
@@ -43,7 +41,11 @@ export default {
 
   threadDump: (id: string) => redirectGet(id, `threaddump`, { Accept: 'application/json' }, { transformResponse }),
 
-  jmx: jmx,
+  jmx: {
+    list: (id: string) => redirectGet(id, 'jolokia/list', { Accept: 'application/json' }, { transformResponse }),
+
+    post: (id: string, mBeanDTO: any, cancelToken?: CancelToken) => redirectPost(id, `jolokia`, mBeanDTO, { cancelToken }),
+  },
 
   instance: (id: string) => api.get(`/api/instances/${id}`),
 

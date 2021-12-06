@@ -50,7 +50,7 @@ export function LineChart(props: LineChartProps) {
           <Tooltip formatter={formatter} contentStyle={{ backgroundColor: colors.background }} />
 
           <Area type='linear' dataKey='value2' stroke='#ffff33' fill='RGBA(255,255,51,0.2)' />
-          <Area type='linear' dataKey='value' stroke='#50D0F6' fill='#50D0F6' />
+          <Area type='linear' dataKey='value' stroke={colors.blue} fill={colors.blue} />
         </AreaChart>
       </ResponsiveContainerStyle>
     </ChartCss>

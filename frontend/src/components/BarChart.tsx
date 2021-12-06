@@ -29,7 +29,7 @@ export function MemoryBarChart() {
 
   useEffect(() => {
     names.forEach(({ name }, index) =>
-      api.metrics(id, 'jvm.memory.used', ['area:nonheap', `id:${name}`]).then(({ data }) =>
+      api.metrics.get(id, 'jvm.memory.used', ['area:nonheap', `id:${name}`]).then(({ data }) =>
         setData(oldData => {
           const newData = [...oldData]
           newData[index] = { ...newData[index], used: Number(data?.measurements[0]?.value / MB).fixed(2) }
@@ -39,7 +39,7 @@ export function MemoryBarChart() {
     )
 
     names.forEach(({ name }, index) =>
-      api.metrics(id, 'jvm.memory.max', ['area:nonheap', `id:${name}`]).then(({ data }) =>
+      api.metrics.get(id, 'jvm.memory.max', ['area:nonheap', `id:${name}`]).then(({ data }) =>
         setData(oldData => {
           const newData = [...oldData]
           newData[index] = { ...newData[index], max: data?.measurements[0]?.value / MB }
@@ -95,7 +95,7 @@ export function MemoryBarChart() {
             contentStyle={{ backgroundColor: colors.background }}
           />
 
-          <Bar dataKey='used' stackId='a' fill='#50D0F6'>
+          <Bar dataKey='used' stackId='a' fill={colors.blue}>
             {data.map((entry, index) => (
               <Cell key={`used-${index}`} fill='RGBA(80,208,246,0.75)' />
             ))}
