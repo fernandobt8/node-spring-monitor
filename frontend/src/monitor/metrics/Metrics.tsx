@@ -69,7 +69,7 @@ export function Metrics() {
           {selectedMetric?.availableTags.map(tag => (
             <Select
               key={tag.tag}
-              width='350px'
+              width='100%'
               isClearable={true}
               placeholder={tag.tag}
               value={selectedTags[tag.tag] || null}
@@ -77,7 +77,9 @@ export function Metrics() {
               options={tag.values.map(v => ({ label: v, value: v }))}
             />
           ))}
-          <Button onClick={add}>Execute</Button>
+          <Button style={{ alignSelf: 'flex-end' }} onClick={add}>
+            Execute
+          </Button>
         </Box>
       </div>
       <ol style={{ flex: '1 1 auto' }}>
