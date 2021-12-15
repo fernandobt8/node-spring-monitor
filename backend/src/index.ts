@@ -1,5 +1,6 @@
 import cookieSession from 'cookie-session'
 import express from 'express'
+import { connect } from 'mongoose'
 import passport from 'passport'
 import path from 'path'
 import routes from './routes'
@@ -28,3 +29,7 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../../frontend/bui
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`)
 })
+
+const mongoHost = process.env.MONGO_HOST
+
+connect(`mongodb://admin:password@${mongoHost}/monitor`)

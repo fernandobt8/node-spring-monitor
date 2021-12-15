@@ -3,6 +3,25 @@ version: "3"
 services:
   app:
     build: ./
+    environment:
+      MONGO_HOST: mongodb
     ports:
       - "80:8000"
     restart: always
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+
+  mongodb:
+    image : mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: monitor
+    volumes:
+      - ./mongodb:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - 27017:27017
+    restart: always    

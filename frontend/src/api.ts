@@ -47,7 +47,13 @@ export default {
     post: (id: string, mBeanDTO: any, cancelToken?: CancelToken) => redirectPost(id, `jolokia`, mBeanDTO, { cancelToken }),
   },
 
-  instance: (id: string) => api.get(`/api/instances/${id}`),
+  instance: {
+    get: (id: string) => api.get(`/api/instances/${id}`),
 
-  instances: () => api.get('/api/instances'),
+    list: (filter?, order?) => api.post('/api/instances', { filter, order }),
+
+    aggregate: () => api.get('/api/instances/aggregate'),
+
+    delete: (id: string) => api.delete(`/api/instances/${id}`),
+  },
 }

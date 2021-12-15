@@ -23,7 +23,7 @@ export default function InstanceMenu() {
   const [instance, setInstance] = useState<InstanceDTO>()
 
   useEffect(() => {
-    api.instance(id).then(({ data }) => setInstance(data))
+    api.instance.get(id).then(({ data }) => setInstance(data))
   }, [id])
 
   return (

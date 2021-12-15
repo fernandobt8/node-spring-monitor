@@ -35,7 +35,7 @@ function TableColumn({ attr, setColumnMaxWidth, width }) {
   )
 
   return (
-    <div ref={div} style={{ width: `${width}px` }}>
+    <div ref={div} style={{ minWidth: `${width}px` }}>
       {attr.map(v => (
         <div key={v}>{v}</div>
       ))}

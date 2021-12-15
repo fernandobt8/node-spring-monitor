@@ -2,21 +2,18 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import api from '../api'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
+import { Input } from '../components/Input'
+import { Label } from '../components/Label'
 import { InstancesTable } from './InstancesTable'
 
 export type InstanceStatus = 'CONNECTED' | 'DOWN'
 
 export type InstanceDTO = {
-  id: string
+  _id: string
   name: string
   managementUrl: string
   healthUrl: string
   serviceUrl: string
-  metadata: {
-    'user.name': string
-    'user.password': string
-    startup: string
-  }
   status: InstanceStatus
   version: string
   sessions: number
@@ -25,22 +22,72 @@ export type InstanceDTO = {
 
 export default function InstancesList() {
   const [data, setData] = useState<InstanceDTO[]>([])
+  const [aggregate, setAggregate] = useState<{ applications; instances; downs }>()
+  const [filter, setFilter] = useState<{ status? }>({})
+  const [order, setOrder] = useState<{}>({})
 
   useEffect(() => {
-    api.instances().then(({ data }) => {
-      setData(data?.sort((a, b) => (a.name > b.name ? 1 : -1)))
+    api.instance.list(filter, order).then(({ data }) => {
+      setData(data)
+    })
+  }, [filter, order])
+
+  useEffect(() => {
+    api.instance.aggregate().then(({ data }) => {
+      setAggregate(data)
     })
   }, [])
 
+  function onChange(name, value) {
+    const newFilter = { ...filter, [name]: value }
+    setFilter(newFilter)
+  }
+
+  function onChangeOrder(name) {
+    const value = order[name]
+    const newOrder = { ...order, [name]: value ? (value === 1 ? -1 : null) : 1 }
+    setOrder(newOrder)
+  }
+
+  function onDelete(id: string) {
+    api.instance.delete(id).then(() => setFilter({ ...filter }))
+  }
+
   return (
-    <>
+    <div style={{ maxWidth: '1360px', margin: 'auto' }}>
       <Header gap={60}>
-        <ItemHeader label='Applications' value={new Set(data.map(i => i.name)).size} />
-        <ItemHeader label='Instances' value={data.length} />
-        <ItemHeader label='Instances down' value={data.filter(i => i.status === 'DOWN').length} />
+        <ItemHeader label='Applications' value={aggregate?.applications} />
+        <ItemHeader label='Instances' value={aggregate?.instances} />
+        <ItemHeader label='Instances down' value={aggregate?.downs} />
       </Header>
-      <InstancesTable instances={data} />
-    </>
+      <Filter justifyContent='flex-start'>
+        <Input width='400px' onChange={e => onChange('name', e.target.value)} placeholder='Filter applications' />
+        <Input width='400px' onChange={e => onChange('version', e.target.value)} placeholder='Filter versions' />
+        <div>
+          <input
+            id='up'
+            type='checkbox'
+            checked={filter.status === 'CONNECTED'}
+            onChange={e => onChange('status', e.target.checked ? 'CONNECTED' : null)}
+          />
+          <Label padding='0px 5px' cursor='pointer' htmlFor='up'>
+            Up
+          </Label>
+        </div>
+        <div>
+          <input
+            id='down'
+            type='checkbox'
+            checked={filter.status === 'DOWN'}
+            onChange={e => onChange('status', e.target.checked ? 'DOWN' : null)}
+          />
+          <Label padding='0px 5px' cursor='pointer' htmlFor='down'>
+            Down
+          </Label>
+        </div>
+      </Filter>
+      <InstancesTable instances={data} onChangeOrder={onChangeOrder} order={order} onDelete={onDelete} />
+    </div>
   )
 }
 
@@ -54,5 +101,9 @@ function ItemHeader({ label, value }: { label: string; value?: number }) {
 }
 
 const Header = styled(FlexBox)<FlexBoxProps>`
+  padding: 20px 0px;
+`
+
+const Filter = styled(FlexBox)<FlexBoxProps>`
   padding: 20px 0px;
 `
