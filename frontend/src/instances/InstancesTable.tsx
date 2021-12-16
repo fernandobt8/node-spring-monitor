@@ -31,14 +31,14 @@ export function InstancesTable({ instances, onChangeOrder, order, onDelete }: In
     <>
       <TableHeader justifyContent={'space-evenly'}>
         <TableColumn name='Status' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.status)} />
-        <TableColumn name='Application' maxWidths={maxWidths}>
-          <Label block cursor='pointer' style={{ width: '100%', textAlign: 'left' }} onClick={() => onChangeOrder('name')}>
+        <TableColumn name='name' maxWidths={maxWidths} onChangeOrder={onChangeOrder}>
+          <Label block cursor='pointer' style={{ width: '100%', textAlign: 'left' }}>
             Application {arrow(order?.name)}
           </Label>
         </TableColumn>
         <TableColumn name='Version' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.version)} />
-        <TableColumn name='Sessions' maxWidths={maxWidths} />
-        <TableColumn name='Uptime' maxWidths={maxWidths} />
+        <TableColumn name='Sessions' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.sessions)} />
+        <TableColumn name='Uptime' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.uptime)} />
         <div style={{ minWidth: 18 }} />
       </TableHeader>
       <ul>
@@ -74,7 +74,7 @@ function ItemList({ props, maxWidths, onDelete }: { props: InstanceDTO; maxWidth
       <TableColumn name='Status' maxWidths={maxWidths}>
         <div style={{ color: status ? 'green' : 'red' }}>{status ? 'U' : 'D'}</div>
       </TableColumn>
-      <TableColumn name='Application' maxWidths={maxWidths}>
+      <TableColumn name='name' maxWidths={maxWidths}>
         <Name>
           <div>{props.name}</div>
           <Link onClick={linkCliked}>{props.serviceUrl}</Link>
@@ -111,16 +111,8 @@ function TableColumn(props: { name; children?; maxWidths: [any, any]; onChangeOr
   const div = useCallback(node => setMaxWidths({ name, value: node?.getBoundingClientRect()?.width }), [name, setMaxWidths])
 
   return (
-    <div ref={div} style={{ minWidth: maxWidths[name] }}>
-      {children ? (
-        children
-      ) : (
-        <Label
-          cursor={onChangeOrder ? 'pointer' : 'inherit'}
-          onClick={onChangeOrder ? () => onChangeOrder(name.toLowerCase()) : null}>
-          {`${name} ${arrow ? arrow : ''}`}
-        </Label>
-      )}
+    <div ref={div} style={{ minWidth: maxWidths[name] }} onClick={onChangeOrder ? () => onChangeOrder(name.toLowerCase()) : null}>
+      {children ? children : <Label cursor={onChangeOrder ? 'pointer' : 'inherit'}>{`${name} ${arrow ? arrow : ''}`}</Label>}
     </div>
   )
 }

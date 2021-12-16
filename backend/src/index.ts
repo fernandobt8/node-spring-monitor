@@ -5,6 +5,8 @@ import passport from 'passport'
 import path from 'path'
 import routes from './routes'
 
+require('dotenv').config()
+
 const app = express()
 const PORT = 8000
 
@@ -32,4 +34,4 @@ app.listen(PORT, () => {
 
 const mongoHost = process.env.MONGO_HOST
 
-connect(`mongodb://admin:password@${mongoHost}/monitor`)
+connect(`mongodb://${mongoHost}/monitor`, { useNewUrlParser: true, useUnifiedTopology: true })

@@ -3,8 +3,8 @@ import { Request, Response } from 'express'
 import passport from 'passport'
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20'
 
-const googleId = '538458025132-gphp355kkkbsbj2s90vpj30o0iu39vnb.apps.googleusercontent.com'
-const googleSecret = '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'
+const googleId = '675874390572-2q2n2bk08uci78ckam33qihslhsgogjt.apps.googleusercontent.com'
+const googleSecret = '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'
 
 passport.serializeUser((user, done) => done(null, user))
 

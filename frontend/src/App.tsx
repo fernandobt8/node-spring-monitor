@@ -79,8 +79,8 @@ const Bar = styled(FlexBox)<FlexBoxProps>`
 const Container = styled.div`
   background-color: var(--backgroundColor);
   color: var(--primaryColor);
-  width: 100%;
-  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
 `
 
 export default App
