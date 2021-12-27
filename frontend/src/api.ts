@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig, CancelToken } from 'axios'
 
-export const api = axios.create()
+export const backend = axios.create()
 
 function redirectGet(id: string, path: string, headers?: any, config?: AxiosRequestConfig) {
-  return api.get(`/api/redirect/instances/${id}`, {
+  return backend.get(`/api/redirect/instances/${id}`, {
     ...config,
     params: {
       path: path,
@@ -13,7 +13,7 @@ function redirectGet(id: string, path: string, headers?: any, config?: AxiosRequ
   })
 }
 function redirectPost(id: string, path: string, data: any, config?: AxiosRequestConfig) {
-  return api.post(`/api/redirect/instances/${id}`, data, {
+  return backend.post(`/api/redirect/instances/${id}`, data, {
     ...config,
     params: {
       path: path,
@@ -48,12 +48,14 @@ export default {
   },
 
   instance: {
-    get: (id: string) => api.get(`/api/instances/${id}`),
+    get: (id: string) => backend.get(`/api/instances/${id}`),
 
-    list: (filter?, order?) => api.post('/api/instances', { filter, order }),
+    list: (filter?, order?) => backend.post('/api/instances', { filter, order }),
 
-    aggregate: () => api.get('/api/instances/aggregate'),
+    aggregate: () => backend.get('/api/instances/aggregate'),
 
-    delete: (id: string) => api.delete(`/api/instances/${id}`),
+    delete: (id: string) => backend.delete(`/api/instances/${id}`),
   },
+
+  user: () => backend.get('/api/user'),
 }

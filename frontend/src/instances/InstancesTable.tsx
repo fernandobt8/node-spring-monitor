@@ -1,7 +1,6 @@
 import React, { useCallback, useReducer } from 'react'
 import { useHistory, useRouteMatch } from 'react-router'
 import styled from 'styled-components'
-import api from '../api'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Label } from '../components/Label'
 import { Uptime } from '../components/Uptime'

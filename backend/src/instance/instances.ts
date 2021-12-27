@@ -37,12 +37,12 @@ export default class InstancesService {
         .map(([k, v]) => [k, { $regex: `^${v}.*`, $options: 'si' }])
     )
 
-    const order = Object.fromEntries(Object.entries(request.body?.order).filter(([_, v]) => v))
+    const requestOrder = request.body?.order
 
-    const hasOrder = Object.entries(order).length > 0
+    const order = requestOrder?.fieldOrder.map((i) => (requestOrder[i] === -1 ? `-${i}` : i)).join(' ')
 
     Instance.find(filtro)
-      .sort(hasOrder ? order : { name: 1, status: 1 })
+      .sort(order ? order : 'name status')
       .then((instances) => response.status(200).send(instances))
   }
 

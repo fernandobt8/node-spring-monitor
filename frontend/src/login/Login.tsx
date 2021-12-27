@@ -1,9 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Logged } from '../App'
 import { BorderRadius } from '../theme/styles'
 
-export function Login({ setLogged }: { setLogged: (e: Logged) => void }) {
+export function Login() {
   return <LoginButton href='/api/auth'>Log in with Google</LoginButton>
 }
 

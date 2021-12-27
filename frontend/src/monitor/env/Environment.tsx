@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Redirect, Route, Switch, useParams, useRouteMatch } from 'react-router'
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router'
 import { NavTab } from 'react-router-tabs'
 import styled from 'styled-components'
 import api from '../../api'
 import { FlexBox, FlexBoxProps } from '../../components/FlexBox'
 import { flatten } from '../../utils/objectUtils'
-import { InstanceParams } from '../InstanceMenu'
+import { useInstanceDto } from '../InstanceContext'
 import { PropertySource } from './PropertySource'
 
 export type PropertiesSources = {
@@ -19,7 +19,7 @@ export type EnvironmentDTO = {
 }
 
 export function Environment() {
-  const { id } = useParams<InstanceParams>()
+  const { _id: id } = useInstanceDto()
   const [env, setEnv] = useState<EnvironmentDTO>()
   const [configs, setConfigs] = useState<EnvironmentDTO>()
   const { path, url } = useRouteMatch()

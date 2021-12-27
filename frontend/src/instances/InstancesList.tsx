@@ -20,11 +20,15 @@ export type InstanceDTO = {
   uptime: number
 }
 
+type OrderDto = {
+  fieldOrder: string[]
+}
+
 export default function InstancesList() {
   const [data, setData] = useState<InstanceDTO[]>([])
   const [aggregate, setAggregate] = useState<{ applications; instances; downs }>()
   const [filter, setFilter] = useState<{ status? }>({})
-  const [order, setOrder] = useState<{}>({})
+  const [order, setOrder] = useState<OrderDto>({ fieldOrder: [] })
 
   useEffect(() => {
     api.instance.list(filter, order).then(({ data }) => {
@@ -43,9 +47,14 @@ export default function InstancesList() {
     setFilter(newFilter)
   }
 
-  function onChangeOrder(name) {
+  function onChangeOrder(name: string) {
     const value = order[name]
     const newOrder = { ...order, [name]: value ? (value === 1 ? -1 : null) : 1 }
+    if (newOrder[name] === 1) {
+      newOrder.fieldOrder.push(name)
+    } else if (newOrder[name] === null) {
+      newOrder.fieldOrder.delete(name)
+    }
     setOrder(newOrder)
   }
 

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Redirect, Route, Switch, useParams, useRouteMatch } from 'react-router'
+import React from 'react'
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router'
 import { NavTab } from 'react-router-tabs'
 import styled from 'styled-components'
-import api from '../api'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Uptime } from '../components/Uptime'
-import { InstanceDTO } from '../instances/InstancesList'
 import { Environment } from './env/Environment'
 import { Geral } from './geral/Geral'
+import { useInstanceDto } from './InstanceContext'
 import { Jmx } from './jmx/Jmx'
 import { Logging } from './log/Logging'
 import { Metrics } from './metrics/Metrics'
@@ -18,13 +17,8 @@ export type InstanceParams = {
 }
 
 export default function InstanceMenu() {
-  const { id } = useParams<InstanceParams>()
   const { path, url } = useRouteMatch()
-  const [instance, setInstance] = useState<InstanceDTO>()
-
-  useEffect(() => {
-    api.instance.get(id).then(({ data }) => setInstance(data))
-  }, [id])
+  const instance = useInstanceDto()
 
   return (
     <>
