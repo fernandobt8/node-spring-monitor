@@ -47,7 +47,7 @@ export function Logging() {
 
 const Log = styled.pre<{ height }>`
   text-align: left;
-  font-size: 12px;
+  font-size: 0.7rem;
   overflow: auto;
   height: calc(100vh - ${p => p.height}px);
 `

@@ -50,7 +50,7 @@ export function PropertySource({ values, count }: { values?: PropertiesSources[]
 }
 
 const PropertySourceHeader = styled.div`
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: bold;
   padding: 10px;
   border-bottom: 2px solid var(--secondaryColor);
@@ -65,7 +65,6 @@ const PropertySourceContent = styled.div<{ borderColor: string }>`
   }
 `
 const PropertySourceItem = styled(FlexBox)`
-  font-size: 16px;
   padding: 8px 10px;
   border-bottom: 2px solid var(--secondaryColor);
   margin: 0px 15px;

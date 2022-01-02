@@ -65,13 +65,13 @@ const Container = styled.div`
 
 const Header = styled(FlexBox)<FlexBoxProps>`
   padding: 15px 0px;
-  font-size: 20px;
+  font-size: 1.4rem;
 `
 
 const NavTabStyled = styled(NavTab)`
   color: var(--primaryColor);
   text-decoration: none;
-  font-size: 20px;
+  font-size: 1.4rem;
   position: relative;
   bottom: -2px;
   padding: 6px 12px;

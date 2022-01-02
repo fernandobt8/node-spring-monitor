@@ -119,9 +119,8 @@ function TableColumn(props: { name; children?; maxWidths: [any, any]; onChangeOr
 const TableHeader = styled(FlexBox)<FlexBoxProps>`
   padding: 10px 0px;
   max-width: 1360px;
-  margin: auto;
   box-shadow: 0 0 2px 2px var(--secondaryColor);
-  margin-bottom: 10px;
+  margin: 0px 5px 10px;
 `
 
 const Name = styled.div`

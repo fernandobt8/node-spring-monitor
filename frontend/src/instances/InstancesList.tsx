@@ -4,6 +4,7 @@ import api from '../api'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Input } from '../components/Input'
 import { Label } from '../components/Label'
+import { queries } from '../theme/theme'
 import { InstancesTable } from './InstancesTable'
 
 export type InstanceStatus = 'CONNECTED' | 'DOWN'
@@ -64,7 +65,7 @@ export default function InstancesList() {
 
   return (
     <div style={{ maxWidth: '1360px', margin: 'auto' }}>
-      <Header gap={60}>
+      <Header>
         <ItemHeader label='Applications' value={aggregate?.applications} />
         <ItemHeader label='Instances' value={aggregate?.instances} />
         <ItemHeader label='Instances down' value={aggregate?.downs} />
@@ -110,7 +111,12 @@ function ItemHeader({ label, value }: { label: string; value?: number }) {
 }
 
 const Header = styled(FlexBox)<FlexBoxProps>`
-  padding: 20px 0px;
+  padding: 10px 0px 0px;
+
+  @media ${queries.tabletAndUp} {
+    padding: 20px 0px 0px;
+    gap: 60px;
+  }
 `
 
 const Filter = styled(FlexBox)<FlexBoxProps>`

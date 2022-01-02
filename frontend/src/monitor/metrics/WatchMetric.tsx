@@ -20,7 +20,7 @@ export function WatchMetric({ dto, remove }: WatchMetricProps) {
   return (
     <Box>
       <FlexBox justifyContent='flex-start' gap={10} alignItems='stretch'>
-        <Label onClick={() => remove(dto.name, [])} size='20px' style={{ cursor: 'url("/cursor.cur"), auto' }}>
+        <Label onClick={() => remove(dto.name, [])} size='1.4rem' style={{ cursor: 'url("/cursor.cur"), auto' }}>
           {dto.name}
         </Label>
         <Label bold margin='auto 0px'>

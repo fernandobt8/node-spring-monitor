@@ -69,9 +69,9 @@ export function JmxDomainOpRow({ value, mbean }: { value: JmxDomainOpRowDTO; mbe
   return (
     <Row>
       <Item onClick={() => setOpen(true)}>
-        <Label size='14px'>{value.methodName}</Label>
+        <Label size='0.9rem'>{value.methodName}</Label>
       </Item>
-      {value.name !== value.desc && <Label size='10px'>{value.desc}</Label>}
+      {value.name !== value.desc && <Label size='0.7rem'>{value.desc}</Label>}
       <Modal isOpen={open} style={customStyles} onRequestClose={() => setOpen(false)}>
         <JmxDomainOpModal value={value} mbean={mbean} />
       </Modal>

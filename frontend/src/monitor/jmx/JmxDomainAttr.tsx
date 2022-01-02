@@ -54,24 +54,24 @@ export function JmxDomainAttrRow(props: { name: string; attr: JmxDomainPropAttrD
 
   return (
     <Row as='li' gap={0} wrap='wrap' key={name} justifyContent='flex-sart'>
-      <Label size='15px' bold padding='5px 10px 5px 0'>
+      <Label bold padding='5px 10px 5px 0'>
         {name}
       </Label>
 
       {isPrimitive(attr.type) ? (
-        <LabelValue size='15px' ref={valueRef} overHeight={valueHeight > 100}>
+        <LabelValue ref={valueRef} overHeight={valueHeight > 100}>
           {attr.value}
         </LabelValue>
       ) : (
         <>
-          <Label size='12px'>{attr.type}</Label>
+          <Label size='0.8rem'>{attr.type}</Label>
           <ValueObject ref={valueRef} overHeight={valueHeight > 100}>
             {attr.value}
           </ValueObject>
         </>
       )}
       <BreakFlexLine />
-      {name !== attr.desc && <Label size='10px'>{attr.desc}</Label>}
+      {name !== attr.desc && <Label size='0.7rem'>{attr.desc}</Label>}
     </Row>
   )
 }
@@ -84,7 +84,7 @@ const Row = styled(FlexBox)<FlexBoxProps>`
   padding: 5px;
 `
 
-const LabelValue = styled(Label)<{ overHeight: boolean; size: string }>`
+const LabelValue = styled(Label)<{ overHeight: boolean; size?: string }>`
   ${p => p.overHeight && `border: 2px solid ${colors.secondary};`}
   ${p => p.overHeight && 'height: 100px;'}
   ${p => p.overHeight && 'width: 100%;'}
@@ -94,7 +94,7 @@ const LabelValue = styled(Label)<{ overHeight: boolean; size: string }>`
 `
 const ValueObject = styled.pre<{ overHeight: boolean }>`
   border: ${`2px solid ${colors.secondary}`};
-  font-size: 11px;
+  font-size: 0.7rem;
   ${p => p.overHeight && 'height: 100px;'}
   width: 100%;
   overflow: auto;

@@ -45,8 +45,8 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
           {value.args?.map((arg, index) => (
             <div key={index}>
               <div>
-                <Label size='15px'>{`${arg.name}: `}</Label>
-                <Label size='12px'>{arg.type}</Label>
+                <Label size='0.9rem'>{`${arg.name}: `}</Label>
+                <Label size='0.7rem'>{arg.type}</Label>
               </div>
               <Input
                 width='300px'
@@ -54,7 +54,7 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
                 onChange={e => setArgs(oldArgs => updateArg([...oldArgs], index, e.target.value))}
               />
               {arg.name !== arg.desc && (
-                <Label block size='12px'>
+                <Label block size='0.8rem'>
                   {arg.desc}
                 </Label>
               )}
@@ -63,7 +63,7 @@ export function JmxDomainOpModal({ value, mbean }: { value: JmxDomainOpRowDTO; m
         </ModalInputs>
         <Button onClick={() => execute()}>Execute</Button>
         {response?.status === 200 && (
-          <Label size='14px' padding='10px' backgroundColor='green' block margin='10px 0px 0px'>
+          <Label size='0.9rem' padding='10px' backgroundColor='green' block margin='10px 0px 0px'>
             Execution successfully
           </Label>
         )}
@@ -86,12 +86,12 @@ const ModalValue = styled.pre<{ height }>`
   overflow: auto;
   max-width: 80vw;
   max-height: calc(90vh - ${p => p.height}px);
-  font-size: 12px;
+  font-size: 0.7rem;
 `
 
 const ModalError = styled.div`
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 0.9rem;
   background-color: red;
   padding: 10px;
 `

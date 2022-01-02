@@ -30,3 +30,7 @@ export const GlobalStyle = createGlobalStyle`
     content: '';
   }
 `
+
+export const queries = {
+  tabletAndUp: 'min-width: 768px',
+}
