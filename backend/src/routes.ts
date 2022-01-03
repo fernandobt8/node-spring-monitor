@@ -51,8 +51,7 @@ function authGoogle(req: Request, res: Response, next: NextFunction) {
   if (req.user) {
     next()
   } else {
-    next()
-    // res.sendStatus(401)
+    res.sendStatus(401)
   }
 }
 
