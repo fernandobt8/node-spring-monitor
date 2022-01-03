@@ -32,5 +32,5 @@ export const GlobalStyle = createGlobalStyle`
 `
 
 export const queries = {
-  tabletAndUp: 'min-width: 768px',
+  tabletAndDown: '(max-width: 768px)',
 }

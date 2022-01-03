@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
           setUser(data)
         } else {
           setUser(null)
-          setLogged('notLogged')
+          setLogged('logged')
         }
       })
       .catch(err => {

@@ -1,13 +1,11 @@
-import React, { useCallback, useReducer } from 'react'
-import { useHistory, useRouteMatch } from 'react-router'
+import React from 'react'
 import styled from 'styled-components'
-import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Label } from '../components/Label'
-import { Uptime } from '../components/Uptime'
-import { BorderRadius } from '../theme/styles'
-import { InstanceDTO } from './InstancesList'
+import { queries } from '../theme/theme'
+import { InstancesBody } from './InstancesBody'
+import { InstanceDTO } from './InstancesListView'
 
-type InstancesTableProps = {
+export type InstancesTableProps = {
   instances: InstanceDTO[]
   onChangeOrder: (name: string) => void
   onDelete: (id: string) => void
@@ -19,131 +17,141 @@ const downArrow = String.fromCodePoint(parseInt('02193', 16))
 const arrow = (value: number) => (value ? (value === 1 ? upArrow : downArrow) : ' ')
 
 export function InstancesTable({ instances, onChangeOrder, order, onDelete }: InstancesTableProps) {
-  const maxWidths = useReducer((oldState: { [key: string]: number }, { name, value }) => {
-    if (value && (!oldState[name] || value > oldState[name])) {
-      return { ...oldState, [name]: value }
-    }
-    return oldState
-  }, {})
-
   return (
-    <>
-      <TableHeader justifyContent={'space-evenly'}>
-        <TableColumn name='Status' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.status)} />
-        <TableColumn name='name' maxWidths={maxWidths} onChangeOrder={onChangeOrder}>
-          <Label block cursor='pointer' style={{ width: '100%', textAlign: 'left' }}>
-            Application {arrow(order?.name)}
-          </Label>
-        </TableColumn>
-        <TableColumn name='Version' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.version)} />
-        <TableColumn name='Sessions' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.sessions)} />
-        <TableColumn name='Uptime' maxWidths={maxWidths} onChangeOrder={onChangeOrder} arrow={arrow(order?.uptime)} />
-        <div style={{ minWidth: 18 }} />
+    <Table>
+      <TableHeader>
+        <tr>
+          <TableColumn name='Status' onChangeOrder={onChangeOrder} arrow={arrow(order?.status)} />
+          <TableColumn name='name' onChangeOrder={onChangeOrder}>
+            <Label block cursor='pointer' style={{ width: '100%', textAlign: 'left' }}>
+              Application {arrow(order?.name)}
+            </Label>
+          </TableColumn>
+          <TableColumn name='Version' onChangeOrder={onChangeOrder} arrow={arrow(order?.version)} />
+          <TableColumn name='Sessions' onChangeOrder={onChangeOrder} arrow={arrow(order?.sessions)} />
+          <TableColumn name='Uptime' onChangeOrder={onChangeOrder} arrow={arrow(order?.uptime)} />
+        </tr>
       </TableHeader>
-      <ul>
+      <tbody>
         {instances.map(item => (
-          <ItemList key={item._id} props={item} maxWidths={maxWidths} onDelete={onDelete} />
+          <InstancesBody key={item._id} props={item} onDelete={onDelete} />
         ))}
-      </ul>
-    </>
+      </tbody>
+    </Table>
   )
 }
 
-function ItemList({ props, maxWidths, onDelete }: { props: InstanceDTO; maxWidths: [any, any]; onDelete }) {
-  const history = useHistory()
-  const { url } = useRouteMatch()
-
-  function itemCliked() {
-    history.push(`${url}/${props._id}`)
-  }
-
-  function linkCliked(e) {
-    e.stopPropagation()
-    window.open(props.serviceUrl, '_blank')
-  }
-
-  function innerDelete(e) {
-    e.stopPropagation()
-    onDelete(props._id)
-  }
-
-  const status = props.status === 'CONNECTED'
-  return (
-    <ItemListStyle as='li' onClick={itemCliked} key={props.name} justifyContent={'space-evenly'}>
-      <TableColumn name='Status' maxWidths={maxWidths}>
-        <div style={{ color: status ? 'green' : 'red' }}>{status ? 'U' : 'D'}</div>
-      </TableColumn>
-      <TableColumn name='name' maxWidths={maxWidths}>
-        <Name>
-          <div>{props.name}</div>
-          <Link onClick={linkCliked}>{props.serviceUrl}</Link>
-        </Name>
-      </TableColumn>
-      <TableColumn name='Version' maxWidths={maxWidths}>
-        <div>{props.version ?? '-'}</div>
-      </TableColumn>
-      <TableColumn name='Sessions' maxWidths={maxWidths}>
-        <div>{props.sessions ?? '-'}</div>
-      </TableColumn>
-      <TableColumn name='Uptime' maxWidths={maxWidths}>
-        <Uptime time={props.uptime} />
-      </TableColumn>
-      <svg width='18' height='18' fill='currentColor' viewBox='0 0 16 16' onClick={innerDelete}>
-        <path d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z' />
-        <path
-          fill-rule='evenodd'
-          d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z'
-        />
-      </svg>
-    </ItemListStyle>
-  )
-}
-
-function TableColumn(props: { name; children?; maxWidths: [any, any]; onChangeOrder?; arrow? }) {
-  const {
-    name,
-    children,
-    maxWidths: [maxWidths, setMaxWidths],
-    onChangeOrder,
-    arrow,
-  } = props
-  const div = useCallback(node => setMaxWidths({ name, value: node?.getBoundingClientRect()?.width }), [name, setMaxWidths])
+function TableColumn(props: { name; children?; onChangeOrder?; arrow? }) {
+  const { name, children, onChangeOrder, arrow } = props
 
   return (
-    <div ref={div} style={{ minWidth: maxWidths[name] }} onClick={onChangeOrder ? () => onChangeOrder(name.toLowerCase()) : null}>
+    <th onClick={onChangeOrder ? () => onChangeOrder(name.toLowerCase()) : null}>
       {children ? children : <Label cursor={onChangeOrder ? 'pointer' : 'inherit'}>{`${name} ${arrow ? arrow : ''}`}</Label>}
-    </div>
+    </th>
   )
 }
 
-const TableHeader = styled(FlexBox)<FlexBoxProps>`
-  padding: 10px 0px;
-  max-width: 1360px;
+const TableHeader = styled.thead`
   box-shadow: 0 0 2px 2px var(--secondaryColor);
-  margin: 0px 5px 10px;
+  margin: 0px 10px;
 `
 
-const Name = styled.div`
-  width: 350px;
-  text-align: left;
-`
+const Table = styled.table`
+  border-collapse: separate;
+  border-spacing: 0px 5px;
+  width: 100%;
 
-const Link = styled.a`
-  color: var(--blueColor);
-  text-decoration: underline;
-`
+  th,
+  td {
+    padding: 5px;
+    text-align: center;
+  }
 
-const ItemListStyle = styled(FlexBox)<FlexBoxProps>`
-  ${BorderRadius}
+  td {
+    border-top: 2px solid var(--primaryColor);
+    border-bottom: 2px solid var(--primaryColor);
+  }
 
-  max-width: 1360px;
-  min-height: 50px;
+  td:first-child {
+    border-radius: 5px 0 0 5px;
+    border-left: 2px solid var(--primaryColor);
+  }
+  td:last-child {
+    border-radius: 0 5px 5px 0;
+    border-right: 2px solid var(--primaryColor);
+  }
 
-  margin: auto;
-  margin-bottom: 5px;
+  @media ${queries.tabletAndDown} {
+    // prettier-ignore
+    table, thead, tbody, && td, tr { 
+      display: block; 
+      border: none;
+      border-right: none;
+      border-left: none;
+    }
 
-  &:hover {
-    cursor: pointer;
-    background-color: var(--secondaryColor);
+    background-color: transparent;
+
+    thead tr {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin: 0px;
+    }
+
+    tbody tr {
+      position: relative;
+      margin: 0px 5px;
+      padding-top: 8px;
+      padding: 10px 0px;
+    }
+
+    tr:not(:first-child) {
+      border-top: 2px solid var(--secondaryColor);
+    }
+
+    td:nth-of-type(1) {
+      position: absolute;
+      top: 1rem;
+      width: 10%;
+    }
+    td:nth-of-type(2) {
+      position: relative;
+      padding-left: 15%;
+    }
+    td:nth-of-type(3) {
+      position: absolute;
+      padding-left: 0px;
+      width: 30%;
+      white-space: nowrap;
+    }
+    td:nth-of-type(4) {
+      position: absolute;
+      padding-left: 30%;
+      width: 30%;
+    }
+    td:nth-of-type(5) {
+      position: absolute;
+      padding-left: 60%;
+      width: 30%;
+    }
+    td:nth-of-type(6) {
+      position: relative;
+      padding-left: 90%;
+      margin-top: 5px;
+    }
+
+    td:nth-of-type(3):before {
+      content: 'Version';
+      display: block;
+    }
+    td:nth-of-type(4):before {
+      content: 'Sessions';
+      display: block;
+    }
+    td:nth-of-type(5):before {
+      content: 'Uptime';
+      display: block;
+    }
   }
 `

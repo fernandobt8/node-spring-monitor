@@ -64,15 +64,15 @@ export default function InstancesList() {
   }
 
   return (
-    <div style={{ maxWidth: '1360px', margin: 'auto' }}>
+    <div style={{ maxWidth: '1360px', margin: 'auto', padding: '8px' }}>
       <Header>
         <ItemHeader label='Applications' value={aggregate?.applications} />
         <ItemHeader label='Instances' value={aggregate?.instances} />
         <ItemHeader label='Instances down' value={aggregate?.downs} />
       </Header>
       <Filter justifyContent='flex-start'>
-        <Input width='400px' onChange={e => onChange('name', e.target.value)} placeholder='Filter applications' />
-        <Input width='400px' onChange={e => onChange('version', e.target.value)} placeholder='Filter versions' />
+        <Input type='text' onChange={e => onChange('name', e.target.value)} placeholder='Filter applications' />
+        <Input type='text' onChange={e => onChange('version', e.target.value)} placeholder='Filter versions' />
         <div>
           <input
             id='up'
@@ -111,14 +111,22 @@ function ItemHeader({ label, value }: { label: string; value?: number }) {
 }
 
 const Header = styled(FlexBox)<FlexBoxProps>`
-  padding: 10px 0px 0px;
+  padding: 20px 0px 0px;
+  gap: 60px;
 
-  @media ${queries.tabletAndUp} {
-    padding: 20px 0px 0px;
-    gap: 60px;
+  @media ${queries.tabletAndDown} {
+    padding: 10px 0px 0px;
+    gap: 14px;
   }
 `
 
 const Filter = styled(FlexBox)<FlexBoxProps>`
   padding: 20px 0px;
+
+  input[type='text'] {
+    width: 400px;
+    @media ${queries.tabletAndDown} {
+      width: 340px;
+    }
+  }
 `

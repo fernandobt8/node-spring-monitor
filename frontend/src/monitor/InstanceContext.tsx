@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../api'
-import { InstanceDTO } from '../instances/InstancesList'
+import { InstanceDTO } from '../instances/InstancesListView'
 import { InstanceParams } from './InstanceMenu'
 
 const InstanceContext = createContext<InstanceDTO>(null)

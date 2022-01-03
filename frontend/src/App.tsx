@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FlexBox, FlexBoxProps } from './components/FlexBox'
 import { Label } from './components/Label'
-import InstancesList from './instances/InstancesList'
+import InstancesList from './instances/InstancesListView'
 import { useAuth } from './login/AuthContext'
 import { Login } from './login/Login'
 import { InstanceProvider } from './monitor/InstanceContext'
@@ -53,6 +53,7 @@ function App() {
 const Bar = styled(FlexBox)<FlexBoxProps>`
   padding: 10px;
   padding-right: calc(100vw - 90vw);
+  margin: 0px 10px;
   border-bottom: 2px solid ${colors.primary};
   & > a {
     text-decoration: none;
