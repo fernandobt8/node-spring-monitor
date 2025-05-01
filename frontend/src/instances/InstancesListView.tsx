@@ -10,14 +10,21 @@ import { InstancesTable } from './InstancesTable'
 export type InstanceStatus = 'CONNECTED' | 'DOWN'
 
 export type InstanceDTO = {
-  _id: string
+  id: string
   name: string
   managementUrl: string
   healthUrl: string
   serviceUrl: string
+  metadata: {
+    username: string
+    userpassword: string
+    startup: string
+    environment: string
+    instanceId: string
+  }
+  endpoints: Record<string, boolean>
+  environment: string
   status: InstanceStatus
-  version: string
-  sessions: number
   uptime: number
 }
 
@@ -72,7 +79,7 @@ export default function InstancesList() {
       </Header>
       <Filter justifyContent='flex-start'>
         <Input type='text' onChange={e => onChange('name', e.target.value)} placeholder='Filter applications' />
-        <Input type='text' onChange={e => onChange('version', e.target.value)} placeholder='Filter versions' />
+        <Input type='text' onChange={e => onChange('environment', e.target.value)} placeholder='Filter environments' />
         <div>
           <input
             id='up'

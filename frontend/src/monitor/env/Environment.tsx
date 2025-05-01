@@ -19,46 +19,63 @@ export type EnvironmentDTO = {
 }
 
 export function Environment() {
-  const { _id: id } = useInstanceDto()
-  const [env, setEnv] = useState<EnvironmentDTO>()
-  const [configs, setConfigs] = useState<EnvironmentDTO>()
+  const { endpoints } = useInstanceDto()
+
   const { path, url } = useRouteMatch()
+
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <ToggleOption gap={0}>
+        {endpoints.env && <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>}
+        {endpoints.configprops && <NavTabStyled to={`${url}/props`}>Config</NavTabStyled>}
+      </ToggleOption>
+
+      <Switch>
+        <Route exact path={`${path}`} render={() => <Redirect to={`${url}/${endpoints.env ? 'env' : 'props'}`} />} />
+        <Route path={`${path}/env`}>
+          <Env />
+        </Route>
+        <Route path={`${path}/props`}>
+          <ConfigProps />
+        </Route>
+      </Switch>
+    </div>
+  )
+}
+
+function Env() {
+  const { id } = useInstanceDto()
+  const [env, setEnv] = useState<EnvironmentDTO>()
 
   useEffect(() => {
     api.env(id).then(({ data }) => setEnv(data))
   }, [id])
 
+  return (
+    <>
+      <div> Active profiles: {env?.activeProfiles.join(', ')}</div>
+      <PropertySource values={env?.propertySources} count={1} />
+    </>
+  )
+}
+
+function ConfigProps() {
+  const { id, name } = useInstanceDto()
+
+  const [configs, setConfigs] = useState<EnvironmentDTO>()
+
   useEffect(() => {
     api.configProps(id).then(({ data }) => {
-      let beans = data?.contexts?.application?.beans
+      let beans = data?.contexts?.[name !== 'spring-boot-application' ? name : 'application']?.beans
       setConfigs({
         propertySources: Object.entries(beans).map(([key, value]: [string, any]) => {
           return { name: key, properties: flatten(value.properties, value.prefix) }
         }),
       })
     })
-  }, [id])
+  }, [id, name])
 
-  let count = 0
-  return (
-    <div style={{ textAlign: 'left' }}>
-      <ToggleOption gap={0}>
-        <NavTabStyled to={`${url}/config`}>Env</NavTabStyled>
-        <NavTabStyled to={`${url}/props`}>Config</NavTabStyled>
-      </ToggleOption>
-
-      <div> Active profiles: {env?.activeProfiles.join(', ')}</div>
-      <Switch>
-        <Route exact path={`${path}`} render={() => <Redirect to={`${url}/config`} />} />
-        <Route path={`${path}/config`}>
-          <PropertySource values={env?.propertySources} count={++count} />
-        </Route>
-        <Route path={`${path}/props`}>
-          <PropertySource values={configs?.propertySources} count={++count} />
-        </Route>
-      </Switch>
-    </div>
-  )
+  return <PropertySource values={configs?.propertySources} count={2} />
 }
 
 const ToggleOption = styled(FlexBox)<FlexBoxProps>`

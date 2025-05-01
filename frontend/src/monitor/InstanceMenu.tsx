@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router'
-import { NavTab } from 'react-router-tabs'
+import { NavTab, NavTabProps } from 'react-router-tabs'
 import styled from 'styled-components'
 import { FlexBox, FlexBoxProps } from '../components/FlexBox'
 import { Uptime } from '../components/Uptime'
@@ -20,28 +20,39 @@ export default function InstanceMenu() {
   const { path, url } = useRouteMatch()
   const instance = useInstanceDto()
 
+  const endpoints = instance.endpoints || {}
   return (
     <>
       <Header gap={60}>
         <div>{instance?.name}</div>
-        <div>{instance?.version}</div>
-        <div>
-          <div>Sessions</div>
-          {instance?.sessions}
-        </div>
+        <div>{instance?.environment}</div>
         <div>
           <div>Uptime</div>
           <Uptime time={instance?.uptime} />
+        </div>
+        <div>
+          <div>Instance Id</div>
+          {instance?.metadata?.instanceId}
         </div>
       </Header>
       <div>
         <InstanceMenuTabs gap={0}>
           <NavTabStyled to={`${url}/geral`}>Geral</NavTabStyled>
-          <NavTabStyled to={`${url}/thread`}>Threads</NavTabStyled>
-          <NavTabStyled to={`${url}/log`}>Log</NavTabStyled>
-          <NavTabStyled to={`${url}/metrics`}>Metrics</NavTabStyled>
-          <NavTabStyled to={`${url}/jmx`}>Jmx</NavTabStyled>
-          <NavTabStyled to={`${url}/env`}>Env</NavTabStyled>
+          <Tab to={`${url}/thread`} enabled={endpoints.threaddump}>
+            Threads
+          </Tab>
+          <Tab to={`${url}/log`} enabled={endpoints.loggers || endpoints.logfile}>
+            Log
+          </Tab>
+          <Tab to={`${url}/metrics`} enabled={endpoints.metrics}>
+            Metrics
+          </Tab>
+          <Tab to={`${url}/jmx`} enabled={endpoints.jolokia}>
+            Jmx
+          </Tab>
+          <Tab to={`${url}/env`} enabled={endpoints.configprops || endpoints.env}>
+            Env
+          </Tab>
         </InstanceMenuTabs>
         <Container>
           <Switch>
@@ -57,6 +68,10 @@ export default function InstanceMenu() {
       </div>
     </>
   )
+}
+
+function Tab({ enabled, children, ...props }: NavTabProps & { enabled?: boolean }) {
+  return enabled ? <NavTabStyled {...props}>{children}</NavTabStyled> : null
 }
 
 const Container = styled.div`

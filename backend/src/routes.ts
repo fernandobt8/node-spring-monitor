@@ -8,7 +8,7 @@ routes.use('/api', routerApi)
 
 const instances = new InstancesService()
 
-routes.post('/instances', authPec, instances.create)
+routes.post('/instances', authSpring, instances.create)
 
 routerApi.post('/instances', authGoogle, instances.list)
 routerApi.get('/instances/aggregate', authGoogle, instances.aggregate)
@@ -33,11 +33,11 @@ function authGoogle(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-const pecToken = 'Basic ' + Buffer.from(process.env.CLIENT_USER_SECRET).toString('base64')
+const springToken = 'Basic ' + Buffer.from(process.env.CLIENT_USER_SECRET).toString('base64')
 
-function authPec(req: Request, res: Response, next: NextFunction) {
+function authSpring(req: Request, res: Response, next: NextFunction) {
   const auth = req.headers.authorization
-  if (pecToken === auth) {
+  if (springToken === auth) {
     next()
   } else {
     res.sendStatus(401)

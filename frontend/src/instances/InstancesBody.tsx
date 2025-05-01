@@ -15,19 +15,19 @@ export function InstancesBody({ props, onDelete }: { props: InstanceDTO; onDelet
 
   function innerDelete(e) {
     e.stopPropagation()
-    onDelete(props._id)
+    onDelete(props.id)
   }
 
   const status = props.status === 'CONNECTED'
   return (
-    <ItemListStyle onClick={() => history.push(`${url}/${props._id}`)} key={props.name}>
+    <ItemListStyle onClick={() => history.push(`${url}/${props.id}`)} key={props.name}>
       <td style={{ color: status ? 'green' : 'red' }}>{status ? 'U' : 'D'}</td>
       <td style={{ textAlign: 'left' }}>
         <div>{props.name}</div>
         <Link onClick={linkCliked}>{props.serviceUrl}</Link>
       </td>
-      <td>{props.version ?? '-'}</td>
-      <td>{props.sessions ?? '-'}</td>
+      <td>{props.environment ?? '-'}</td>
+      <td>{props.metadata.instanceId ?? '-'}</td>
       <td>
         <Uptime time={props.uptime} />
       </td>

@@ -1,14 +1,20 @@
-FROM node:latest
+FROM node:22 as builder
 
-COPY backend/build/ backend/build/
-COPY backend/node_modules/ backend/node_modules/
-COPY backend/package.json backend/package.json
+COPY backend/ backend/
+COPY frontend/ frontend/
 
-COPY frontend/build/ frontend/build/
+RUN yarn --cwd backend install
+RUN yarn --cwd backend build 
 
-WORKDIR backend/
+RUN yarn --cwd frontend install
+RUN yarn --cwd frontend build
 
-RUN yarn install
+FROM node:22
+
+COPY --from=builder backend/build/ ./
+COPY --from=builder backend/node_modules/ node_modules/
+
+COPY --from=builder frontend/build/ static/
 
 EXPOSE 8000
-CMD [ "node", "build/index.js" ]
+CMD [ "node", "./index.js" ]

@@ -39,6 +39,12 @@ export default {
 
   logFile: (id: string, headers: any) => redirectGet(id, 'logfile', headers),
 
+  loggers :{
+    get : (id: string, headers: any) => redirectGet(id, 'loggers', headers, { transformResponse }),
+    
+    post: (id: string, loggerName: string, data: any) => redirectPost(id, `loggers/${loggerName}`, data)
+  },
+
   threadDump: (id: string) => redirectGet(id, `threaddump`, { Accept: 'application/json' }, { transformResponse }),
 
   jmx: {

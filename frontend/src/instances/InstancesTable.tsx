@@ -27,14 +27,14 @@ export function InstancesTable({ instances, onChangeOrder, order, onDelete }: In
               Application {arrow(order?.name)}
             </Label>
           </TableColumn>
-          <TableColumn name='Version' onChangeOrder={onChangeOrder} arrow={arrow(order?.version)} />
-          <TableColumn name='Sessions' onChangeOrder={onChangeOrder} arrow={arrow(order?.sessions)} />
+          <TableColumn name='Environment' onChangeOrder={onChangeOrder} arrow={arrow(order?.environment)} />
+          <TableColumn name='Instance Id' />
           <TableColumn name='Uptime' onChangeOrder={onChangeOrder} arrow={arrow(order?.uptime)} />
         </tr>
       </TableHeader>
       <tbody>
         {instances.map(item => (
-          <InstancesBody key={item._id} props={item} onDelete={onDelete} />
+          <InstancesBody key={item.id} props={item} onDelete={onDelete} />
         ))}
       </tbody>
     </Table>

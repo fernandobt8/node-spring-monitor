@@ -2,7 +2,6 @@ require('dotenv').config()
 
 import cookieSession from 'cookie-session'
 import express from 'express'
-import { connect } from 'mongoose'
 import passport from 'passport'
 import path from 'path'
 import routes from './routes'
@@ -24,14 +23,10 @@ app.use(passport.session())
 
 app.use(routes)
 
-app.use(express.static(path.join(__dirname, '../../frontend/build')))
+app.use(express.static(path.join(__dirname, './static')))
 
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../../frontend/build/index.html')))
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, './static/index.html')))
 
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`)
 })
-
-const mongoHost = process.env.MONGO_HOST
-
-connect(`${mongoHost}`, { useNewUrlParser: true, useUnifiedTopology: true })

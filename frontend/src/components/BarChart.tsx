@@ -18,7 +18,10 @@ type DataDto = {
 
 const names = [
   { name: 'Metaspace', desc: 'Meta' },
-  { name: 'Code Cache', desc: 'Code Cache' },
+  // { name: 'Code Cache', desc: 'Code Cache' },
+  { name: "CodeHeap 'non-nmethods'", desc: 'Code Heap non nm' },
+  { name: "CodeHeap 'profiled nmethods'", desc: 'Code Heap pro nm' },
+  { name: "CodeHeap 'non-profiled nmethods'", desc: 'Code Heap non pro nm' },
   { name: 'Compressed Class Space', desc: 'Comp Class' },
 ]
 
@@ -59,7 +62,7 @@ export function MemoryBarChart() {
   }, [data])
 
   return (
-    <ChartCss style={{ height: '220px', width: '400px' }}>
+    <ChartCss style={{ height: '220px', width: '800px' }}>
       <div>NonHeap</div>
       <ResponsiveContainerStyle width='100%' height='100%'>
         <BarChart

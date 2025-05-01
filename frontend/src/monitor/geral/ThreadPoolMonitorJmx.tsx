@@ -36,14 +36,14 @@ export function ThreadPoolMonitorJmx(props: ThreadPoolMonitorProps) {
   useEffect(() => {
     apiMetrics(undefined)[0]
       .then(({ data }) => {
-        setCorePool(data?.value?.CoreWorkerPoolSize)
+        setCorePool(data?.value?.currentThreadCount)
       })
       .catch(({ data }) => {
         console.log('erro')
       })
   }, [apiMetrics])
 
-  const onResponse = useCallback((responses: AxiosResponse[]) => ({ value: responses[0].data?.value?.BusyWorkerThreadCount }), [])
+  const onResponse = useCallback((responses: AxiosResponse[]) => ({ value: responses[0].data?.value?.currentThreadsBusy }), [])
 
   const actives = useActivesInterval(apiMetrics, onResponse)
 

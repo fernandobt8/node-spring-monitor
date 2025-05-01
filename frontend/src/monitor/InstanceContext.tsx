@@ -4,11 +4,11 @@ import api from '../api'
 import { InstanceDTO } from '../instances/InstancesListView'
 import { InstanceParams } from './InstanceMenu'
 
-const InstanceContext = createContext<InstanceDTO>(null)
+const InstanceContext = createContext<InstanceDTO>({} as InstanceDTO)
 
 export function InstanceProvider({ children }) {
   const { id } = useParams<InstanceParams>()
-  const [instance, setInstance] = useState<InstanceDTO>()
+  const [instance, setInstance] = useState<InstanceDTO>({} as InstanceDTO)
 
   useEffect(() => {
     api.instance.get(id).then(({ data }) => setInstance(data))
