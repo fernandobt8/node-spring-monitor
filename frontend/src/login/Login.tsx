@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { BorderRadius } from '../theme/styles'
 
 export function Login() {
-  return <LoginButton href='/api/auth'>Log in with Google</LoginButton>
+  return <LoginButton href='/api/login'>Log in with Google</LoginButton>
 }
 
 const LoginButton = styled.a`

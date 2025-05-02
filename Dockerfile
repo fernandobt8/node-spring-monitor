@@ -1,4 +1,4 @@
-FROM node:22 as builder
+FROM node:22-slim as builder
 
 COPY backend/ backend/
 COPY frontend/ frontend/
@@ -9,10 +9,9 @@ RUN yarn --cwd backend build
 RUN yarn --cwd frontend install
 RUN yarn --cwd frontend build
 
-FROM node:22
+FROM node:22-slim
 
-COPY --from=builder backend/build/ ./
-COPY --from=builder backend/node_modules/ node_modules/
+COPY --from=builder backend/dist/ ./
 
 COPY --from=builder frontend/build/ static/
 

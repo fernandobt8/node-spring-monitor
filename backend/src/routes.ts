@@ -1,6 +1,19 @@
 import express, { NextFunction, Request, Response } from 'express'
-import GoogleAuth from './google'
 import InstancesService from './instance/instances'
+import { requiresAuth } from 'express-openid-connect'
+
+const authGoogle = requiresAuth()
+
+const springToken = 'Basic ' + Buffer.from(process.env.CLIENT_USER_SECRET).toString('base64')
+
+function authSpring(req: Request, res: Response, next: NextFunction) {
+  const auth = req.headers.authorization
+  if (springToken === auth) {
+    next()
+  } else {
+    res.sendStatus(401)
+  }
+}
 
 const routes = express.Router()
 const routerApi = express.Router()
@@ -19,30 +32,8 @@ routerApi.delete('/instances/:id', authGoogle, instances.delete)
 routerApi.get('/redirect/instances/:id', authGoogle, instances.redirectGet)
 routerApi.post('/redirect/instances/:id', authGoogle, instances.redirectPost)
 
-const google = new GoogleAuth()
-
-routerApi.get('/user', authGoogle, google.user)
-routerApi.get('/auth', google.auth)
-routerApi.get('/google/callback', google.callback)
-routerApi.get('/logout', google.logout)
-
-function authGoogle(req: Request, res: Response, next: NextFunction) {
-  if (req.user) {
-    next()
-  } else {
-    res.sendStatus(401)
-  }
-}
-
-const springToken = 'Basic ' + Buffer.from(process.env.CLIENT_USER_SECRET).toString('base64')
-
-function authSpring(req: Request, res: Response, next: NextFunction) {
-  const auth = req.headers.authorization
-  if (springToken === auth) {
-    next()
-  } else {
-    res.sendStatus(401)
-  }
-}
+routerApi.get('/user', authGoogle, (req: Request, res: Response) => {
+  res.status(200).json(req.oidc.user)
+})
 
 export default routes

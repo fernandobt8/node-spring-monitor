@@ -1,39 +1,26 @@
-import { Request, Response } from 'express'
+import { auth } from 'express-openid-connect'
+import { ProxyAgent } from 'proxy-agent'
 
-import passport from 'passport'
-import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20'
+const proxy = new ProxyAgent()
 
-const googleId = process.env.GOOGLE_CLIENT_ID
-const googleSecret = process.env.GOOGLE_CLIENT_SECRET
-
-passport.serializeUser((user, done) => done(null, user))
-
-passport.deserializeUser((user, done) => done(null, user))
-
-passport.use(
-  new Strategy(
-    {
-      clientID: googleId,
-      clientSecret: googleSecret,
-      callbackURL: '/api/google/callback',
-      proxy: true,
-    },
-    (accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) => done(null, profile)
-  )
-)
-
-export default class GoogleAuth {
-  async user(req: Request, res: Response) {
-    res.status(200).json(req.user)
-  }
-
-  async logout(req: Request, res: Response) {
-    req.session = null
-    req.logout(() => {})
-    res.redirect('/')
-  }
-
-  auth = passport.authenticate('google', { scope: ['email', 'profile'] })
-
-  callback = [passport.authenticate('google', { failureRedirect: '/' }), (req: Request, res: Response) => res.redirect('/')]
-}
+export const authGoogle = auth({
+  issuerBaseURL: 'https://accounts.google.com',
+  baseURL: process.env.BASE_URL,
+  clientID: process.env.GOOGLE_CLIENT_ID!,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+  secret: process.env.SESSION_SECRET!,
+  httpAgent: {
+    http: proxy,
+    https: proxy,
+  },
+  authRequired: false,
+  routes: {
+    login: '/api/login',
+    logout: '/api/logout',
+    callback: '/api/google/callback',
+  },
+  authorizationParams: {
+    scope: 'openid email profile',
+    response_type: 'code',
+  },
+})

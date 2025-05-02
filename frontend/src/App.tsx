@@ -41,9 +41,9 @@ function App() {
       case 'notLogged':
         return <Login />
       case 'wait':
-        return <div>carregando</div>
+        return <div>Loading</div>
       case 'error':
-        return <div>deu ruim</div>
+        return <div>Error</div>
     }
   }
 

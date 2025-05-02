@@ -1,31 +1,25 @@
 require('dotenv').config()
 
-import cookieSession from 'cookie-session'
 import express from 'express'
-import passport from 'passport'
+
 import path from 'path'
 import routes from './routes'
+import { authGoogle } from './google'
 
 const app = express()
 const PORT = 8000
 
+app.set('trust proxy', true)
+
 app.use(express.json())
 
-app.use(
-  cookieSession({
-    name: 'google-auth-session',
-    keys: ['key1', 'key2'],
-  })
-)
-
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(authGoogle)
 
 app.use(routes)
 
 app.use(express.static(path.join(__dirname, './static')))
 
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, './static/index.html')))
+app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, './static/index.html')))
 
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`)
