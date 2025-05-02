@@ -9,6 +9,7 @@ routes.use('/api', routerApi)
 const instances = new InstancesService()
 
 routes.post('/instances', authSpring, instances.create)
+routes.delete('/instances/:id', authSpring, instances.delete)
 
 routerApi.post('/instances', authGoogle, instances.list)
 routerApi.get('/instances/aggregate', authGoogle, instances.aggregate)
